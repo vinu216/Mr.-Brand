@@ -1,0 +1,352 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MR. BRAND — Your Cart</title>
+<link rel="stylesheet" href="css/main.css">
+<style>
+.cart-layout {
+  max-width: 1300px; margin: 0 auto;
+  display: grid; grid-template-columns: 1fr 380px;
+  gap: 48px; padding: 48px 60px 80px;
+}
+/* Cart Items */
+.cart-items {}
+.cart-item-hd {
+  display: grid; grid-template-columns: 1fr auto auto auto;
+  gap: 24px; padding-bottom: 16px;
+  border-bottom: 1px solid var(--glass-border);
+  margin-bottom: 8px;
+}
+.cart-item-hd span {
+  font-family: 'Syncopate', sans-serif;
+  font-size: 8px; letter-spacing: 3px; color: var(--text-dim);
+}
+.cart-item-hd span:nth-child(2) { text-align:center; }
+.cart-item-hd span:nth-child(3) { text-align:center; }
+.cart-item-hd span:nth-child(4) { text-align:right; }
+.ci {
+  display: grid; grid-template-columns: 1fr auto auto auto;
+  gap: 24px; align-items: center;
+  padding: 24px 0; border-bottom: 1px solid var(--glass-border);
+}
+.ci-prod { display: flex; align-items: center; gap: 20px; }
+.ci-img {
+  width: 90px; height: 110px; flex-shrink: 0;
+  background: rgba(255,255,255,0.02); border: 1px solid var(--glass-border);
+  display: flex; align-items: center; justify-content: center;
+  position: relative; overflow: hidden;
+}
+.ci-img-bg { position: absolute; inset: 0; }
+.ci-meta {}
+.ci-col { font-size: 9px; letter-spacing: 3px; text-transform: uppercase; color: var(--gold); margin-bottom: 4px; }
+.ci-name { font-family: 'Cormorant Garamond', serif; font-size: 20px; font-weight: 300; margin-bottom: 4px; }
+.ci-spec { font-size: 11px; color: var(--text-dim); letter-spacing: 1px; }
+.ci-actions { display: flex; gap: 12px; margin-top: 10px; }
+.ci-act-btn {
+  font-size: 10px; letter-spacing: 1px; color: var(--text-dim);
+  background: none; border: none; cursor: none; transition: color 0.2s; padding: 0;
+}
+.ci-act-btn:hover { color: var(--gold); }
+.ci-act-btn.remove:hover { color: #e74c3c; }
+.ci-qty { display: flex; justify-content: center; }
+.ci-qty-ctrl { display: flex; align-items: center; border: 1px solid var(--glass-border); }
+.ci-qty-btn {
+  width: 30px; height: 30px; background: transparent; border: none;
+  color: var(--text-muted); cursor: none; font-size: 16px; transition: all 0.2s;
+  display: flex; align-items: center; justify-content: center;
+}
+.ci-qty-btn:hover { background: rgba(255,255,255,0.05); color: var(--gold); }
+.ci-qty-val { width: 36px; text-align: center; font-size: 14px; }
+.ci-price { text-align: right; }
+.ci-price-val { font-family: 'Cormorant Garamond', serif; font-size: 22px; color: var(--gold-light); }
+.ci-price-unit { font-size: 10px; color: var(--text-dim); margin-top: 2px; }
+/* Empty state */
+.empty-cart {
+  text-align: center; padding: 80px 0;
+}
+.empty-icon { font-size: 56px; margin-bottom: 20px; opacity: 0.4; }
+.empty-title { font-family: 'Cormorant Garamond', serif; font-size: 36px; font-weight: 300; margin-bottom: 10px; }
+.empty-sub { font-size: 14px; color: var(--text-muted); margin-bottom: 28px; }
+/* Promo */
+.promo-box {
+  display: flex; gap: 0; margin-top: 28px;
+}
+.promo-inp {
+  flex: 1; background: rgba(255,255,255,0.04); border: 1px solid var(--glass-border);
+  border-right: none; padding: 13px 16px; color: var(--text-primary);
+  font-size: 13px; font-family: 'DM Sans', sans-serif; outline: none;
+  text-transform: uppercase; letter-spacing: 2px;
+}
+.promo-inp::placeholder { text-transform: none; letter-spacing: 1px; color: var(--text-dim); }
+.promo-inp:focus { border-color: var(--gold); }
+.promo-btn {
+  font-family: 'Syncopate', sans-serif; font-size: 9px; letter-spacing: 2px;
+  padding: 13px 22px; background: var(--glass); border: 1px solid var(--glass-border);
+  color: var(--text-muted); cursor: none; transition: all 0.3s; white-space: nowrap;
+}
+.promo-btn:hover { background: var(--gold); border-color: var(--gold); color: var(--bg-void); }
+.promo-note { font-size: 11px; color: var(--text-dim); margin-top: 8px; }
+/* Order Summary */
+.order-summary {
+  background: rgba(255,255,255,0.02); border: 1px solid var(--glass-border);
+  padding: 28px; position: sticky; top: 100px; height: fit-content;
+}
+.os-title { font-family: 'Syncopate', sans-serif; font-size: 10px; letter-spacing: 4px; margin-bottom: 24px; }
+.os-row {
+  display: flex; justify-content: space-between; align-items: center;
+  margin-bottom: 14px; font-size: 13px;
+}
+.os-row-label { color: var(--text-muted); }
+.os-row-val { color: var(--text-primary); }
+.os-row-val.free { color: var(--neon); font-size: 12px; letter-spacing: 1px; }
+.os-divider { height: 1px; background: var(--glass-border); margin: 18px 0; }
+.os-total {
+  display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 6px;
+}
+.os-total-label { font-family: 'Syncopate', sans-serif; font-size: 10px; letter-spacing: 3px; }
+.os-total-val { font-family: 'Cormorant Garamond', serif; font-size: 30px; color: var(--gold-light); }
+.os-savings { font-size: 12px; color: var(--neon); margin-bottom: 20px; }
+.secure-note {
+  display: flex; align-items: center; gap: 8px;
+  font-size: 11px; color: var(--text-dim); margin-top: 14px;
+}
+.payment-logos {
+  display: flex; gap: 8px; margin-top: 16px; flex-wrap: wrap;
+}
+.payment-logo {
+  padding: 4px 10px; background: rgba(255,255,255,0.04);
+  border: 1px solid var(--glass-border); font-size: 10px;
+  color: var(--text-dim); letter-spacing: 1px;
+}
+
+/* Delivery estimate */
+.delivery-est {
+  background: rgba(0,255,209,0.05); border: 1px solid rgba(0,255,209,0.15);
+  padding: 14px 16px; margin-top: 16px;
+}
+.de-title { font-size: 10px; letter-spacing: 2px; color: var(--neon); margin-bottom: 4px; font-family:'Syncopate',sans-serif; }
+.de-dates { font-size: 13px; color: var(--text-primary); }
+
+@media(max-width:1024px) {
+  .cart-layout { grid-template-columns:1fr; gap:32px; padding:32px 30px 60px; }
+  .order-summary { position:static; }
+}
+@media(max-width:600px) {
+  .cart-layout { padding:24px 20px 50px; }
+  .ci { grid-template-columns:1fr; gap:12px; }
+  .ci-qty, .ci-price { text-align:left; }
+  .cart-item-hd { display:none; }
+}
+</style>
+</head>
+<body>
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+
+<nav id="navbar">
+  <a href="index.html" class="nav-logo">MR<span>.</span> BRAND</a>
+  <ul class="nav-links">
+    <li><a href="index.html">Watches</a></li>
+    <li><a href="#">Jewellery</a></li>
+    <li><a href="#">Accessories</a></li>
+    <li><a href="#">Bespoke</a></li>
+    <li><a href="#">Heritage</a></li>
+    <li><a href="#">Stores</a></li>
+  </ul>
+  <div class="nav-right">
+    <button class="nav-icon-btn" title="Account">
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="4.5" r="2.5" stroke="currentColor" stroke-width="1.2"/><path d="M2 12.5c0-2.8 2.2-5 5-5s5 2.2 5 5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+    </button>
+    <a href="cart.html" class="nav-icon-btn" style="position:relative">
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M1 1h2l1.5 7.5h7L13 4H4" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="5.5" cy="11.5" r="1" fill="currentColor"/><circle cx="10.5" cy="11.5" r="1" fill="currentColor"/></svg>
+      <span class="cart-badge">0</span>
+    </a>
+  </div>
+</nav>
+
+<div class="breadcrumb">
+  <div class="breadcrumb-trail"><a href="index.html">Home</a> <span>›</span> <span>Your Bag</span></div>
+  <div class="breadcrumb-title">Shopping Bag</div>
+</div>
+
+<div class="cart-layout">
+  <!-- Items -->
+  <div>
+    <div class="cart-item-hd">
+      <span>PRODUCT</span>
+      <span>QTY</span>
+      <span>PRICE</span>
+      <span>TOTAL</span>
+    </div>
+    <div id="cartItems"></div>
+    <!-- Promo -->
+    <div style="margin-top:28px;" id="promoSection">
+      <div class="promo-box">
+        <input class="promo-inp" id="promoInp" placeholder="Enter promo / gift code">
+        <button class="promo-btn" onclick="applyPromo()">Apply</button>
+      </div>
+      <div class="promo-note" id="promoNote">Try code <strong>MRBRAND10</strong> for 10% off</div>
+    </div>
+  </div>
+
+  <!-- Summary -->
+  <div class="order-summary reveal">
+    <div class="os-title">ORDER SUMMARY</div>
+    <div class="os-row"><span class="os-row-label">Subtotal (<span id="osItemCount">0</span> items)</span><span class="os-row-val" id="osSubtotal">₹0</span></div>
+    <div class="os-row"><span class="os-row-label">Shipping</span><span class="os-row-val free" id="osShipping">FREE</span></div>
+    <div class="os-row"><span class="os-row-label">Discount</span><span class="os-row-val" id="osDiscount" style="color:var(--neon)">—</span></div>
+    <div class="os-row"><span class="os-row-label">GST (3%)</span><span class="os-row-val" id="osGst">₹0</span></div>
+    <div class="os-divider"></div>
+    <div class="os-total">
+      <span class="os-total-label">TOTAL</span>
+      <span class="os-total-val" id="osTotal">₹0</span>
+    </div>
+    <div class="os-savings" id="osSavings" style="display:none">🎉 You save ₹0 on this order!</div>
+    <button class="btn-gold" style="width:100%;justify-content:center;padding:18px;" onclick="window.location.href='checkout.html'">
+      Proceed to Checkout →
+    </button>
+    <div class="secure-note">🔒 Secure SSL encrypted checkout</div>
+    <div class="payment-logos">
+      <div class="payment-logo">UPI</div>
+      <div class="payment-logo">VISA</div>
+      <div class="payment-logo">MC</div>
+      <div class="payment-logo">Amex</div>
+      <div class="payment-logo">NB</div>
+      <div class="payment-logo">COD</div>
+    </div>
+    <div class="delivery-est">
+      <div class="de-title">ESTIMATED DELIVERY</div>
+      <div class="de-dates" id="deliveryDate">—</div>
+    </div>
+  </div>
+</div>
+
+<div class="feature-strip">
+  <div class="fstrip-item"><span class="fstrip-icon">🚚</span><div><div class="fstrip-name">Free Delivery</div><div class="fstrip-desc">Insured shipping on all orders</div></div></div>
+  <div class="fstrip-item"><span class="fstrip-icon">🔒</span><div><div class="fstrip-name">Authenticity Cert.</div><div class="fstrip-desc">Certified by our master atelier</div></div></div>
+  <div class="fstrip-item"><span class="fstrip-icon">↩</span><div><div class="fstrip-name">30-Day Returns</div><div class="fstrip-desc">Hassle-free, full refund</div></div></div>
+  <div class="fstrip-item"><span class="fstrip-icon">🛠</span><div><div class="fstrip-name">Lifetime Service</div><div class="fstrip-desc">Complimentary maintenance forever</div></div></div>
+</div>
+
+<footer>
+  <div class="footer-grid">
+    <div><span class="footer-logo">MR<span>.</span> BRAND</span><p class="footer-tagline">Geneva-inspired. India-crafted. World-revered.</p><div class="footer-social"><a href="#" class="social-btn">𝕏</a><a href="#" class="social-btn">in</a><a href="#" class="social-btn">ig</a><a href="#" class="social-btn">yt</a></div></div>
+    <div><div class="footer-col-title">Collections</div><ul class="footer-links"><li><a href="#">Celestial Series</a></li><li><a href="#">Lumière Series</a></li><li><a href="#">Horizon Series</a></li><li><a href="#">Nocturne Series</a></li></ul></div>
+    <div><div class="footer-col-title">Maison</div><ul class="footer-links"><li><a href="#">Heritage</a></li><li><a href="#">Atelier</a></li><li><a href="#">Sustainability</a></li><li><a href="#">Careers</a></li></ul></div>
+    <div><div class="footer-col-title">Services</div><ul class="footer-links"><li><a href="#">Private Appointments</a></li><li><a href="#">Bespoke Orders</a></li><li><a href="#">Authentication</a></li></ul></div>
+  </div>
+  <div class="footer-bottom">
+    <span class="footer-copy">© 2025 MR. BRAND MAISON. ALL RIGHTS RESERVED.</span>
+    <div class="footer-legal"><a href="#">Privacy</a><a href="#">Terms</a><a href="#">Cookies</a></div>
+  </div>
+</footer>
+
+<script src="js/app.js"></script>
+<script>
+let promoApplied = false;
+let discountAmt = 0;
+
+function renderCart() {
+  const items = Cart.get();
+  const container = document.getElementById('cartItems');
+  const promoSec = document.getElementById('promoSection');
+
+  if (!items.length) {
+    container.innerHTML = `<div class="empty-cart"><div class="empty-icon">🛍</div><h2 class="empty-title">Your Bag is Empty</h2><p class="empty-sub">Discover our collection of extraordinary timepieces.</p><a href="index.html" class="btn-gold" style="display:inline-flex">Explore Collection</a></div>`;
+    promoSec.style.display = 'none';
+    updateSummary([]);
+    return;
+  }
+
+  container.innerHTML = items.map(item => {
+    const p = PRODUCTS.find(x => x.id === item.id) || {};
+    return `<div class="ci">
+      <div class="ci-prod">
+        <div class="ci-img">
+          <div class="ci-img-bg" style="background:radial-gradient(ellipse at 40% 40%,${item.color ? item.color + '22' : 'rgba(201,168,76,0.12)'},transparent 70%)"></div>
+          ${watchSVG(item.color||'#C9A84C', item.caseFill||'#3a2e1a', item.dialBg||'#1a1510', 60)}
+        </div>
+        <div class="ci-meta">
+          <div class="ci-col">${item.collection}</div>
+          <div class="ci-name">${item.name}</div>
+          <div class="ci-spec">${p.spec||''}</div>
+          <div class="ci-actions">
+            <button class="ci-act-btn" onclick="window.location.href='product.html?id=${item.id}'">View Details</button>
+            <span style="color:var(--text-dim);">|</span>
+            <button class="ci-act-btn remove" onclick="removeItem('${item.key}')">Remove</button>
+          </div>
+        </div>
+      </div>
+      <div class="ci-qty">
+        <div class="ci-qty-ctrl">
+          <button class="ci-qty-btn" onclick="updateQty('${item.key}',${item.qty-1})">−</button>
+          <div class="ci-qty-val">${item.qty}</div>
+          <button class="ci-qty-btn" onclick="updateQty('${item.key}',${item.qty+1})">+</button>
+        </div>
+      </div>
+      <div class="ci-price">
+        <div class="ci-price-val">₹${item.price.toLocaleString('en-IN')}</div>
+        <div class="ci-price-unit">per piece</div>
+      </div>
+      <div class="ci-price">
+        <div class="ci-price-val">₹${(item.price * item.qty).toLocaleString('en-IN')}</div>
+        <div class="ci-price-unit">total</div>
+      </div>
+    </div>`;
+  }).join('');
+  updateSummary(items);
+}
+
+function updateSummary(items) {
+  const subtotal = items.reduce((s,i) => s + i.price * i.qty, 0);
+  const gst = Math.round(subtotal * 0.03);
+  const total = subtotal + gst - discountAmt;
+  const count = items.reduce((s,i) => s + i.qty, 0);
+  document.getElementById('osSubtotal').textContent = `₹${subtotal.toLocaleString('en-IN')}`;
+  document.getElementById('osItemCount').textContent = count;
+  document.getElementById('osGst').textContent = `₹${gst.toLocaleString('en-IN')}`;
+  document.getElementById('osTotal').textContent = `₹${Math.max(0,total).toLocaleString('en-IN')}`;
+  if (discountAmt > 0) {
+    document.getElementById('osDiscount').textContent = `−₹${discountAmt.toLocaleString('en-IN')}`;
+    document.getElementById('osSavings').style.display = '';
+    document.getElementById('osSavings').textContent = `🎉 You save ₹${discountAmt.toLocaleString('en-IN')} on this order!`;
+  } else {
+    document.getElementById('osDiscount').textContent = '—';
+    document.getElementById('osSavings').style.display = 'none';
+  }
+  // Delivery date
+  const d = new Date(); d.setDate(d.getDate() + 4);
+  const d2 = new Date(); d2.setDate(d2.getDate() + 6);
+  const fmt = dt => dt.toLocaleDateString('en-IN', {day:'numeric',month:'long'});
+  document.getElementById('deliveryDate').textContent = `${fmt(d)} – ${fmt(d2)}`;
+}
+
+function removeItem(key) {
+  Cart.remove(key);
+  renderCart();
+}
+function updateQty(key, qty) {
+  Cart.updateQty(key, Math.max(0, Math.min(5, qty)));
+  renderCart();
+}
+function applyPromo() {
+  const code = document.getElementById('promoInp').value.trim().toUpperCase();
+  const note = document.getElementById('promoNote');
+  if (code === 'MRBRAND10') {
+    discountAmt = Math.round(Cart.total() * 0.1);
+    promoApplied = true;
+    note.innerHTML = '<span style="color:var(--neon)">✓ 10% discount applied!</span>';
+    updateSummary(Cart.get());
+  } else if (code === 'FREESHIP') {
+    note.innerHTML = '<span style="color:var(--neon)">✓ Free shipping already included!</span>';
+  } else {
+    note.innerHTML = '<span style="color:#e74c3c">✗ Invalid code. Try MRBRAND10</span>';
+  }
+}
+
+renderCart();
+</script>
+</body>
+</html>
