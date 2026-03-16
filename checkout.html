@@ -1,0 +1,782 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MR. BRAND — Secure Checkout</title>
+<link rel="stylesheet" href="css/main.css">
+<style>
+/* Steps */
+.checkout-steps {
+  display: flex; align-items: center; gap: 0; margin-bottom: 44px;
+  max-width: 500px;
+}
+.step {
+  display: flex; align-items: center; gap: 10px;
+  font-family: 'Syncopate', sans-serif; font-size: 8px; letter-spacing: 2px;
+}
+.step-num {
+  width: 28px; height: 28px; border-radius: 50%; flex-shrink: 0;
+  border: 1px solid var(--glass-border); background: transparent;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 12px; color: var(--text-dim); transition: all 0.3s;
+}
+.step.active .step-num { border-color: var(--gold); background: var(--gold); color: var(--bg-void); font-weight: 700; }
+.step.done .step-num { border-color: var(--neon); background: transparent; color: var(--neon); }
+.step-lbl { color: var(--text-dim); white-space: nowrap; }
+.step.active .step-lbl { color: var(--gold); }
+.step.done .step-lbl { color: var(--neon); }
+.step-line { flex: 1; height: 1px; background: var(--glass-border); min-width: 40px; margin: 0 8px; }
+/* Layout */
+.checkout-layout {
+  max-width: 1300px; margin: 0 auto;
+  display: grid; grid-template-columns: 1fr 380px;
+  gap: 48px; padding: 0 60px 80px;
+}
+.checkout-main {}
+/* Panels */
+.panel {
+  border: 1px solid var(--glass-border); background: rgba(255,255,255,0.02);
+  margin-bottom: 20px; transition: border-color 0.3s;
+}
+.panel-hd {
+  padding: 20px 24px; display: flex; justify-content: space-between; align-items: center;
+  border-bottom: 1px solid var(--glass-border);
+}
+.panel-title { font-family: 'Syncopate', sans-serif; font-size: 10px; letter-spacing: 4px; }
+.panel-body { padding: 24px; }
+.panel-edit {
+  font-size: 10px; color: var(--gold); background: none; border: none;
+  cursor: none; letter-spacing: 1px; transition: opacity 0.2s;
+}
+.panel-edit:hover { opacity: 0.7; }
+
+/* Login/Guest */
+.login-opts { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 20px; }
+.login-opt {
+  padding: 20px; border: 1px solid var(--glass-border); cursor: none;
+  background: transparent; text-align: left; transition: all 0.3s; display: block;
+}
+.login-opt:hover, .login-opt.on { border-color: var(--gold); background: rgba(201,168,76,0.04); }
+.lo-title { font-family: 'Syncopate', sans-serif; font-size: 9px; letter-spacing: 2px; color: var(--text-primary); margin-bottom: 4px; }
+.lo-sub { font-size: 11px; color: var(--text-dim); }
+
+/* Delivery options */
+.delivery-opts { display: flex; flex-direction: column; gap: 12px; }
+.dopt {
+  padding: 16px 20px; border: 1px solid var(--glass-border);
+  cursor: none; display: flex; align-items: center; gap: 16px; transition: all 0.3s;
+}
+.dopt:hover, .dopt.on { border-color: var(--gold); background: rgba(201,168,76,0.04); }
+.dopt-radio {
+  width: 18px; height: 18px; border-radius: 50%;
+  border: 1px solid var(--glass-border); flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center; transition: all 0.3s;
+}
+.dopt.on .dopt-radio { border-color: var(--gold); }
+.dopt.on .dopt-radio::after { content: ''; width: 8px; height: 8px; border-radius: 50%; background: var(--gold); }
+.dopt-info { flex: 1; }
+.dopt-name { font-family: 'Syncopate', sans-serif; font-size: 9px; letter-spacing: 2px; margin-bottom: 2px; }
+.dopt-detail { font-size: 11px; color: var(--text-dim); }
+.dopt-price { font-family: 'Cormorant Garamond', serif; font-size: 18px; color: var(--gold-light); }
+
+/* Payment */
+.pay-tabs { display: flex; gap: 0; margin-bottom: 24px; overflow-x: auto; }
+.pay-tabs::-webkit-scrollbar { display: none; }
+.pay-tab {
+  padding: 12px 20px; border: 1px solid var(--glass-border); border-right: none;
+  font-family: 'Syncopate', sans-serif; font-size: 8px; letter-spacing: 2px;
+  color: var(--text-dim); cursor: none; background: transparent;
+  transition: all 0.2s; white-space: nowrap;
+}
+.pay-tab:last-child { border-right: 1px solid var(--glass-border); }
+.pay-tab:hover, .pay-tab.on { border-color: var(--gold); color: var(--gold); background: rgba(201,168,76,0.06); z-index: 1; }
+.pay-panel { display: none; }
+.pay-panel.on { display: block; }
+
+/* UPI */
+.upi-opts { display: flex; flex-direction: column; gap: 10px; }
+.upi-opt {
+  padding: 14px 18px; border: 1px solid var(--glass-border);
+  cursor: none; display: flex; align-items: center; gap: 14px; transition: all 0.3s;
+}
+.upi-opt:hover, .upi-opt.on { border-color: var(--gold); background: rgba(201,168,76,0.04); }
+.upi-radio {
+  width: 16px; height: 16px; border-radius: 50%; border: 1px solid var(--glass-border); flex-shrink: 0; transition: all 0.2s;
+}
+.upi-opt.on .upi-radio { border-color: var(--gold); }
+.upi-opt.on .upi-radio::after { content:''; display:block; width:7px; height:7px; border-radius:50%; background:var(--gold); margin:4px auto; }
+.upi-label { font-size: 13px; flex: 1; }
+.upi-logo { font-family: 'Syncopate', sans-serif; font-size: 9px; letter-spacing: 1px; color: var(--text-dim); }
+.upi-id-box { margin-top: 16px; }
+.upi-id-row { display: flex; gap: 0; }
+.upi-id-inp {
+  flex: 1; background: rgba(255,255,255,0.04); border: 1px solid var(--glass-border);
+  border-right: none; padding: 13px 16px; color: var(--text-primary);
+  font-size: 13px; font-family: 'DM Sans', sans-serif; outline: none;
+}
+.upi-id-inp:focus { border-color: var(--gold); }
+.upi-verify-btn {
+  font-family: 'Syncopate', sans-serif; font-size: 9px; letter-spacing: 2px;
+  padding: 13px 20px; background: var(--gold); border: 1px solid var(--gold);
+  color: var(--bg-void); cursor: none; transition: background 0.3s; white-space: nowrap;
+}
+.upi-verify-btn:hover { background: var(--gold-light); }
+/* QR Code SVG */
+.qr-box {
+  display: flex; flex-direction: column; align-items: center;
+  gap: 12px; padding: 24px; border: 1px solid var(--glass-border);
+  background: rgba(255,255,255,0.02); margin-top: 16px;
+}
+.qr-title { font-family: 'Syncopate', sans-serif; font-size: 9px; letter-spacing: 3px; color: var(--text-muted); }
+.qr-amt { font-family: 'Cormorant Garamond', serif; font-size: 28px; color: var(--gold-light); }
+.qr-note { font-size: 11px; color: var(--text-dim); text-align: center; max-width: 220px; }
+
+/* Card */
+.card-visual {
+  background: linear-gradient(135deg, rgba(201,168,76,0.15) 0%, rgba(10,10,15,0.8) 100%);
+  border: 1px solid rgba(201,168,76,0.25); border-radius: 12px;
+  padding: 28px; margin-bottom: 24px; position: relative; overflow: hidden;
+  min-height: 180px;
+}
+.card-chip { font-size: 24px; margin-bottom: 20px; }
+.card-number-display { font-family: 'Syncopate', sans-serif; font-size: 16px; letter-spacing: 6px; color: var(--text-muted); margin-bottom: 20px; }
+.card-bottom { display: flex; justify-content: space-between; align-items: flex-end; }
+.card-holder-display { }
+.cdd-label { font-size: 8px; letter-spacing: 3px; color: var(--text-dim); margin-bottom: 4px; }
+.cdd-val { font-family: 'Syncopate', sans-serif; font-size: 10px; letter-spacing: 2px; }
+.card-brand-display { font-family: 'Syncopate', sans-serif; font-size: 18px; font-weight: 700; color: var(--gold); letter-spacing: 2px; }
+.card-glow { position: absolute; right: -60px; top: -60px; width: 200px; height: 200px; border-radius: 50%; background: radial-gradient(circle, rgba(201,168,76,0.08) 0%, transparent 70%); }
+
+/* Net Banking */
+.bank-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 10px; margin-bottom: 16px; }
+.bank-opt {
+  padding: 14px 10px; border: 1px solid var(--glass-border);
+  cursor: none; display: flex; flex-direction: column; align-items: center;
+  gap: 6px; transition: all 0.3s; background: transparent;
+}
+.bank-opt:hover, .bank-opt.on { border-color: var(--gold); background: rgba(201,168,76,0.04); }
+.bank-icon { font-size: 22px; }
+.bank-name { font-size: 9px; letter-spacing: 1px; color: var(--text-muted); text-align: center; }
+.bank-select-row { display: flex; gap: 0; }
+
+/* Wallet */
+.wallet-opts { display: grid; grid-template-columns: repeat(3,1fr); gap: 10px; }
+.wallet-opt {
+  padding: 16px 14px; border: 1px solid var(--glass-border);
+  cursor: none; display: flex; flex-direction: column; align-items: center;
+  gap: 8px; transition: all 0.3s; background: transparent;
+}
+.wallet-opt:hover, .wallet-opt.on { border-color: var(--gold); background: rgba(201,168,76,0.04); }
+.wallet-icon { font-size: 28px; }
+.wallet-name { font-size: 9px; letter-spacing: 1px; color: var(--text-muted); }
+
+/* COD */
+.cod-box {
+  padding: 24px; background: rgba(0,255,209,0.04);
+  border: 1px solid rgba(0,255,209,0.15); display: flex; gap: 16px;
+}
+.cod-icon { font-size: 36px; }
+.cod-info {}
+.cod-title { font-family: 'Syncopate', sans-serif; font-size: 10px; letter-spacing: 2px; margin-bottom: 8px; }
+.cod-desc { font-size: 13px; color: var(--text-muted); line-height: 1.7; }
+
+/* Order Summary (sidebar) */
+.co-summary {
+  background: rgba(255,255,255,0.02); border: 1px solid var(--glass-border);
+  padding: 24px; position: sticky; top: 100px; height: fit-content;
+}
+.cos-title { font-family: 'Syncopate', sans-serif; font-size: 10px; letter-spacing: 4px; margin-bottom: 20px; }
+.cos-item { display: flex; align-items: center; gap: 14px; margin-bottom: 16px; }
+.cos-img {
+  width: 60px; height: 72px; flex-shrink: 0;
+  background: rgba(255,255,255,0.02); border: 1px solid var(--glass-border);
+  display: flex; align-items: center; justify-content: center; position: relative;
+  overflow: hidden;
+}
+.cos-img-bg { position: absolute; inset: 0; }
+.cos-meta { flex: 1; }
+.cos-name { font-family: 'Cormorant Garamond', serif; font-size: 16px; margin-bottom: 2px; }
+.cos-col { font-size: 10px; color: var(--text-dim); letter-spacing: 1px; }
+.cos-qty { font-size: 11px; color: var(--text-dim); margin-top: 2px; }
+.cos-price { font-family: 'Cormorant Garamond', serif; font-size: 18px; color: var(--gold-light); white-space: nowrap; }
+.cos-divider { height: 1px; background: var(--glass-border); margin: 16px 0; }
+.cos-row { display: flex; justify-content: space-between; font-size: 13px; margin-bottom: 10px; }
+.cos-row-lbl { color: var(--text-muted); }
+.cos-total { display: flex; justify-content: space-between; align-items: baseline; }
+.cos-total-lbl { font-family: 'Syncopate', sans-serif; font-size: 9px; letter-spacing: 3px; }
+.cos-total-val { font-family: 'Cormorant Garamond', serif; font-size: 28px; color: var(--gold-light); }
+.ssl-note { display: flex; align-items: center; gap: 6px; font-size: 10px; color: var(--text-dim); margin-top: 16px; }
+
+@media(max-width:1024px) {
+  .checkout-layout { grid-template-columns:1fr; gap:32px; padding:0 30px 60px; }
+  .co-summary { position:static; }
+  .login-opts { grid-template-columns:1fr; }
+  .bank-grid { grid-template-columns:repeat(3,1fr); }
+}
+@media(max-width:600px) {
+  .checkout-layout { padding:0 20px 50px; }
+  .pay-tab { padding:10px 14px; font-size:7px; }
+  .bank-grid { grid-template-columns:repeat(2,1fr); }
+  .wallet-opts { grid-template-columns:repeat(2,1fr); }
+}
+</style>
+</head>
+<body>
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+
+<nav id="navbar" style="background:rgba(5,5,7,0.97);border-bottom:1px solid var(--glass-border);">
+  <a href="index.html" class="nav-logo">MR<span>.</span> BRAND</a>
+  <div style="font-family:'Syncopate',sans-serif;font-size:9px;letter-spacing:4px;color:var(--neon);display:flex;align-items:center;gap:8px;">🔒 SECURE CHECKOUT</div>
+  <div class="nav-right">
+    <a href="cart.html" class="nav-icon-btn" style="position:relative">
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M1 1h2l1.5 7.5h7L13 4H4" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="5.5" cy="11.5" r="1" fill="currentColor"/><circle cx="10.5" cy="11.5" r="1" fill="currentColor"/></svg>
+      <span class="cart-badge">0</span>
+    </a>
+  </div>
+</nav>
+
+<div style="padding:90px 60px 32px;background:var(--bg-deep);border-bottom:1px solid var(--glass-border);">
+  <!-- Stepper -->
+  <div class="checkout-steps">
+    <div class="step done" id="step1">
+      <div class="step-num">✓</div>
+      <span class="step-lbl">BAG</span>
+    </div>
+    <div class="step-line"></div>
+    <div class="step active" id="step2">
+      <div class="step-num">2</div>
+      <span class="step-lbl">ADDRESS</span>
+    </div>
+    <div class="step-line"></div>
+    <div class="step" id="step3">
+      <div class="step-num">3</div>
+      <span class="step-lbl">PAYMENT</span>
+    </div>
+    <div class="step-line"></div>
+    <div class="step" id="step4">
+      <div class="step-num">4</div>
+      <span class="step-lbl">CONFIRM</span>
+    </div>
+  </div>
+  <div class="breadcrumb-title" id="checkoutTitle">Delivery Details</div>
+</div>
+
+<div class="checkout-layout">
+  <!-- Main -->
+  <div>
+    <!-- ADDRESS SECTION -->
+    <div id="addressSection">
+      <!-- Login / Guest -->
+      <div class="panel reveal">
+        <div class="panel-hd"><span class="panel-title">ACCOUNT</span></div>
+        <div class="panel-body">
+          <div class="login-opts">
+            <button class="login-opt on" onclick="selectLoginOpt(this)">
+              <div class="lo-title">CONTINUE AS GUEST</div>
+              <div class="lo-sub">No account needed</div>
+            </button>
+            <button class="login-opt" onclick="selectLoginOpt(this)">
+              <div class="lo-title">SIGN IN</div>
+              <div class="lo-sub">For faster checkout & order tracking</div>
+            </button>
+          </div>
+          <div class="form-group"><label class="form-label">EMAIL ADDRESS</label><input type="email" class="form-input" id="emailInput" placeholder="your@email.com"></div>
+        </div>
+      </div>
+
+      <!-- Address Form -->
+      <div class="panel reveal reveal-d1">
+        <div class="panel-hd"><span class="panel-title">DELIVERY ADDRESS</span></div>
+        <div class="panel-body">
+          <div class="form-row">
+            <div class="form-group"><label class="form-label">FIRST NAME</label><input type="text" class="form-input" id="fname" placeholder="Arjun"></div>
+            <div class="form-group"><label class="form-label">LAST NAME</label><input type="text" class="form-input" id="lname" placeholder="Sharma"></div>
+          </div>
+          <div class="form-group"><label class="form-label">MOBILE NUMBER</label>
+            <div style="display:flex;gap:0;">
+              <div style="background:rgba(255,255,255,0.04);border:1px solid var(--glass-border);border-right:none;padding:14px 14px;font-size:13px;color:var(--text-muted);white-space:nowrap;">+91</div>
+              <input type="tel" class="form-input" id="phone" placeholder="9876543210" style="border-left:none;">
+            </div>
+          </div>
+          <div class="form-group"><label class="form-label">ADDRESS LINE 1</label><input type="text" class="form-input" id="addr1" placeholder="House / Flat No., Building Name"></div>
+          <div class="form-group"><label class="form-label">ADDRESS LINE 2 (OPTIONAL)</label><input type="text" class="form-input" id="addr2" placeholder="Street, Area, Landmark"></div>
+          <div class="form-row">
+            <div class="form-group"><label class="form-label">CITY</label><input type="text" class="form-input" id="city" placeholder="Mumbai"></div>
+            <div class="form-group"><label class="form-label">PINCODE</label><input type="text" class="form-input" id="pincode" placeholder="400001" oninput="pincodeCheck(this.value)"></div>
+          </div>
+          <div class="form-row">
+            <div class="form-group"><label class="form-label">STATE</label>
+              <select class="form-select" id="state">
+                <option value="">Select State</option>
+                <option>Andhra Pradesh</option><option>Assam</option><option>Bihar</option>
+                <option>Chandigarh</option><option>Chhattisgarh</option><option>Delhi</option>
+                <option>Goa</option><option>Gujarat</option><option>Haryana</option>
+                <option>Himachal Pradesh</option><option>Jharkhand</option><option>Karnataka</option>
+                <option>Kerala</option><option>Madhya Pradesh</option><option>Maharashtra</option>
+                <option>Manipur</option><option>Meghalaya</option><option>Mizoram</option>
+                <option>Nagaland</option><option>Odisha</option><option>Punjab</option>
+                <option>Rajasthan</option><option>Sikkim</option><option>Tamil Nadu</option>
+                <option>Telangana</option><option>Tripura</option><option>Uttar Pradesh</option>
+                <option>Uttarakhand</option><option>West Bengal</option>
+              </select>
+            </div>
+            <div class="form-group"><label class="form-label">COUNTRY</label>
+              <select class="form-select" id="country"><option>India</option><option>United Arab Emirates</option><option>United Kingdom</option><option>United States</option><option>Singapore</option><option>Canada</option></select>
+            </div>
+          </div>
+          <div id="pincodeInfo" style="font-size:12px;color:var(--neon);margin-top:-8px;margin-bottom:12px;display:none;">✓ Deliverable — Estimated 4-6 business days</div>
+          <div class="form-group">
+            <label style="display:flex;align-items:center;gap:10px;cursor:none;">
+              <div class="fchk" id="saveAddrChk" onclick="this.classList.toggle('on')" style="width:16px;height:16px;border:1px solid var(--glass-border);display:flex;align-items:center;justify-content:center;transition:all 0.2s;"></div>
+              <span style="font-size:12px;color:var(--text-muted);">Save this address for future orders</span>
+            </label>
+          </div>
+          <button class="btn-gold" style="width:100%;justify-content:center;padding:18px;" onclick="proceedToPayment()">
+            Continue to Payment →
+          </button>
+        </div>
+      </div>
+
+      <!-- Delivery Options -->
+      <div class="panel reveal reveal-d2">
+        <div class="panel-hd"><span class="panel-title">DELIVERY OPTIONS</span></div>
+        <div class="panel-body">
+          <div class="delivery-opts">
+            <div class="dopt on" onclick="selectDelivery(this,'standard')">
+              <div class="dopt-radio"></div>
+              <div class="dopt-info">
+                <div class="dopt-name">STANDARD DELIVERY</div>
+                <div class="dopt-detail" id="stdDate">4–6 business days · Fully insured</div>
+              </div>
+              <div class="dopt-price" style="color:var(--neon);font-size:14px;letter-spacing:1px;">FREE</div>
+            </div>
+            <div class="dopt" onclick="selectDelivery(this,'express')">
+              <div class="dopt-radio"></div>
+              <div class="dopt-info">
+                <div class="dopt-name">EXPRESS DELIVERY</div>
+                <div class="dopt-detail" id="expDate">1–2 business days · Priority handling</div>
+              </div>
+              <div class="dopt-price">₹999</div>
+            </div>
+            <div class="dopt" onclick="selectDelivery(this,'white-glove')">
+              <div class="dopt-radio"></div>
+              <div class="dopt-info">
+                <div class="dopt-name">WHITE GLOVE</div>
+                <div class="dopt-detail">Same day · Personal concierge delivery (Select cities)</div>
+              </div>
+              <div class="dopt-price">₹2,499</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PAYMENT SECTION (hidden initially) -->
+    <div id="paymentSection" style="display:none;">
+      <!-- Address Summary -->
+      <div class="panel" id="addrSummaryPanel">
+        <div class="panel-hd">
+          <span class="panel-title">DELIVERING TO</span>
+          <button class="panel-edit" onclick="backToAddress()">Edit</button>
+        </div>
+        <div class="panel-body" id="addrSummaryBody" style="font-size:13px;color:var(--text-muted);line-height:1.8;"></div>
+      </div>
+
+      <!-- Payment Panel -->
+      <div class="panel reveal">
+        <div class="panel-hd"><span class="panel-title">PAYMENT METHOD</span></div>
+        <div class="panel-body">
+          <div class="pay-tabs">
+            <button class="pay-tab on" onclick="setPayTab(this,'upi')">UPI</button>
+            <button class="pay-tab" onclick="setPayTab(this,'card')">CREDIT / DEBIT</button>
+            <button class="pay-tab" onclick="setPayTab(this,'nb')">NET BANKING</button>
+            <button class="pay-tab" onclick="setPayTab(this,'wallet')">WALLET</button>
+            <button class="pay-tab" onclick="setPayTab(this,'cod')">CASH ON DELIVERY</button>
+          </div>
+
+          <!-- UPI Panel -->
+          <div class="pay-panel on" id="pp-upi">
+            <div class="upi-opts">
+              <div class="upi-opt on" onclick="selectUPIopt(this,'id')">
+                <div class="upi-radio"></div>
+                <div class="upi-label">Pay by UPI ID / VPA</div>
+                <div class="upi-logo">UPI</div>
+              </div>
+              <div class="upi-opt" onclick="selectUPIopt(this,'gpay')">
+                <div class="upi-radio"></div>
+                <div class="upi-label">Google Pay</div>
+                <div class="upi-logo">G Pay</div>
+              </div>
+              <div class="upi-opt" onclick="selectUPIopt(this,'phonepe')">
+                <div class="upi-radio"></div>
+                <div class="upi-label">PhonePe</div>
+                <div class="upi-logo">PhonePe</div>
+              </div>
+              <div class="upi-opt" onclick="selectUPIopt(this,'paytm')">
+                <div class="upi-radio"></div>
+                <div class="upi-label">Paytm</div>
+                <div class="upi-logo">Paytm</div>
+              </div>
+              <div class="upi-opt" onclick="selectUPIopt(this,'qr')">
+                <div class="upi-radio"></div>
+                <div class="upi-label">Scan QR Code</div>
+                <div class="upi-logo">⊞ QR</div>
+              </div>
+            </div>
+            <div class="upi-id-box" id="upiIdBox">
+              <div class="form-label" style="margin-bottom:8px;">ENTER YOUR UPI ID</div>
+              <div class="upi-id-row">
+                <input type="text" class="upi-id-inp" id="upiId" placeholder="yourname@upi">
+                <button class="upi-verify-btn" onclick="verifyUPI()">Verify</button>
+              </div>
+              <div id="upiStatus" style="font-size:11px;margin-top:6px;"></div>
+            </div>
+            <div class="qr-box" id="qrBox" style="display:none;">
+              <div class="qr-title">SCAN & PAY</div>
+              <svg width="180" height="180" viewBox="0 0 180 180" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <rect width="180" height="180" fill="#0A0A0F"/>
+                <!-- QR corner marks -->
+                <rect x="10" y="10" width="50" height="50" fill="none" stroke="#C9A84C" stroke-width="4"/>
+                <rect x="18" y="18" width="34" height="34" fill="#C9A84C" opacity="0.7"/>
+                <rect x="120" y="10" width="50" height="50" fill="none" stroke="#C9A84C" stroke-width="4"/>
+                <rect x="128" y="18" width="34" height="34" fill="#C9A84C" opacity="0.7"/>
+                <rect x="10" y="120" width="50" height="50" fill="none" stroke="#C9A84C" stroke-width="4"/>
+                <rect x="18" y="128" width="34" height="34" fill="#C9A84C" opacity="0.7"/>
+                <!-- QR data dots (decorative) -->
+                <g fill="#C9A84C" opacity="0.8">
+                  <rect x="70" y="10" width="8" height="8"/><rect x="82" y="10" width="8" height="8"/>
+                  <rect x="94" y="10" width="8" height="8"/><rect x="70" y="22" width="8" height="8"/>
+                  <rect x="94" y="22" width="8" height="8"/><rect x="70" y="34" width="8" height="8"/>
+                  <rect x="82" y="34" width="8" height="8"/><rect x="94" y="34" width="8" height="8"/>
+                  <rect x="70" y="46" width="8" height="8"/><rect x="82" y="46" width="8" height="8"/>
+                  <rect x="10" y="70" width="8" height="8"/><rect x="22" y="70" width="8" height="8"/>
+                  <rect x="46" y="70" width="8" height="8"/><rect x="70" y="70" width="8" height="8"/>
+                  <rect x="94" y="70" width="8" height="8"/><rect x="106" y="70" width="8" height="8"/>
+                  <rect x="130" y="70" width="8" height="8"/><rect x="154" y="70" width="8" height="8"/>
+                  <rect x="10" y="82" width="8" height="8"/><rect x="34" y="82" width="8" height="8"/>
+                  <rect x="58" y="82" width="8" height="8"/><rect x="82" y="82" width="8" height="8"/>
+                  <rect x="106" y="82" width="8" height="8"/><rect x="130" y="82" width="8" height="8"/>
+                  <rect x="154" y="82" width="8" height="8"/><rect x="10" y="94" width="8" height="8"/>
+                  <rect x="22" y="94" width="8" height="8"/><rect x="46" y="94" width="8" height="8"/>
+                  <rect x="58" y="94" width="8" height="8"/><rect x="82" y="94" width="8" height="8"/>
+                  <rect x="118" y="94" width="8" height="8"/><rect x="154" y="94" width="8" height="8"/>
+                  <rect x="70" y="106" width="8" height="8"/><rect x="94" y="106" width="8" height="8"/>
+                  <rect x="118" y="106" width="8" height="8"/><rect x="142" y="106" width="8" height="8"/>
+                  <rect x="70" y="118" width="8" height="8"/><rect x="82" y="118" width="8" height="8"/>
+                  <rect x="106" y="118" width="8" height="8"/><rect x="130" y="118" width="8" height="8"/>
+                  <rect x="70" y="130" width="8" height="8"/><rect x="94" y="130" width="8" height="8"/>
+                  <rect x="118" y="130" width="8" height="8"/><rect x="154" y="130" width="8" height="8"/>
+                  <rect x="70" y="142" width="8" height="8"/><rect x="82" y="142" width="8" height="8"/>
+                  <rect x="106" y="142" width="8" height="8"/><rect x="142" y="142" width="8" height="8"/>
+                  <rect x="70" y="154" width="8" height="8"/><rect x="94" y="154" width="8" height="8"/>
+                  <rect x="118" y="154" width="8" height="8"/>
+                </g>
+                <!-- MR Brand logo in center -->
+                <text x="90" y="92" text-anchor="middle" font-family="'Syncopate',sans-serif" font-size="7" fill="#C9A84C" letter-spacing="2">MR.B</text>
+              </svg>
+              <div class="qr-amt" id="qrAmt">₹0</div>
+              <div class="qr-note">Open any UPI app and scan to pay securely</div>
+            </div>
+          </div>
+
+          <!-- Card Panel -->
+          <div class="pay-panel" id="pp-card">
+            <div class="card-visual" id="cardVisual">
+              <div class="card-glow"></div>
+              <div class="card-chip">▣</div>
+              <div class="card-number-display" id="cardNumDisplay">•••• •••• •••• ••••</div>
+              <div class="card-bottom">
+                <div class="card-holder-display">
+                  <div class="cdd-label">CARD HOLDER</div>
+                  <div class="cdd-val" id="cardHolderDisplay">YOUR NAME</div>
+                </div>
+                <div>
+                  <div class="cdd-label">EXPIRES</div>
+                  <div class="cdd-val" id="cardExpDisplay">MM/YY</div>
+                </div>
+                <div class="card-brand-display" id="cardBrand">VISA</div>
+              </div>
+            </div>
+            <div class="form-group">
+              <label class="form-label">CARD NUMBER</label>
+              <input type="text" class="form-input" id="cardNum" placeholder="1234 5678 9012 3456" maxlength="19" oninput="formatCardNum(this)">
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">CARD HOLDER NAME</label>
+                <input type="text" class="form-input" id="cardHolder" placeholder="Name on card" oninput="document.getElementById('cardHolderDisplay').textContent=this.value||'YOUR NAME'">
+              </div>
+              <div class="form-group">
+                <label class="form-label">EXPIRY</label>
+                <input type="text" class="form-input" id="cardExp" placeholder="MM / YY" maxlength="7" oninput="formatExp(this)">
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label class="form-label">CVV</label>
+                <input type="password" class="form-input" id="cardCVV" placeholder="•••" maxlength="4">
+              </div>
+              <div class="form-group" style="display:flex;align-items:flex-end;">
+                <div style="font-size:11px;color:var(--text-dim);padding-bottom:6px;line-height:1.6;">🔒 Your card details are encrypted using 256-bit SSL</div>
+              </div>
+            </div>
+            <div class="form-group">
+              <label style="display:flex;align-items:center;gap:10px;cursor:none;">
+                <div class="fchk on" onclick="this.classList.toggle('on')" style="width:16px;height:16px;border:1px solid var(--glass-border);display:flex;align-items:center;justify-content:center;transition:all 0.2s;background:var(--gold);"></div>
+                <span style="font-size:12px;color:var(--text-muted);">Save card securely for faster checkout</span>
+              </label>
+            </div>
+          </div>
+
+          <!-- Net Banking Panel -->
+          <div class="pay-panel" id="pp-nb">
+            <div class="bank-grid">
+              <button class="bank-opt" onclick="selectBank(this)"><span class="bank-icon">🏦</span><span class="bank-name">SBI</span></button>
+              <button class="bank-opt" onclick="selectBank(this)"><span class="bank-icon">🏦</span><span class="bank-name">HDFC</span></button>
+              <button class="bank-opt" onclick="selectBank(this)"><span class="bank-icon">🏦</span><span class="bank-name">ICICI</span></button>
+              <button class="bank-opt" onclick="selectBank(this)"><span class="bank-icon">🏦</span><span class="bank-name">Axis</span></button>
+              <button class="bank-opt" onclick="selectBank(this)"><span class="bank-icon">🏦</span><span class="bank-name">Kotak</span></button>
+              <button class="bank-opt" onclick="selectBank(this)"><span class="bank-icon">🏦</span><span class="bank-name">PNB</span></button>
+              <button class="bank-opt" onclick="selectBank(this)"><span class="bank-icon">🏦</span><span class="bank-name">BOB</span></button>
+              <button class="bank-opt" onclick="selectBank(this)"><span class="bank-icon">🏦</span><span class="bank-name">Canara</span></button>
+            </div>
+            <div class="form-group">
+              <label class="form-label">OR SELECT OTHER BANK</label>
+              <select class="form-select">
+                <option>-- Select your bank --</option>
+                <option>Yes Bank</option><option>IndusInd Bank</option>
+                <option>Federal Bank</option><option>Karnataka Bank</option>
+                <option>South Indian Bank</option><option>IDFC First Bank</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- Wallet Panel -->
+          <div class="pay-panel" id="pp-wallet">
+            <div class="wallet-opts">
+              <button class="wallet-opt on" onclick="selectWallet(this)"><span class="wallet-icon">📱</span><span class="wallet-name">Paytm</span></button>
+              <button class="wallet-opt" onclick="selectWallet(this)"><span class="wallet-icon">📲</span><span class="wallet-name">PhonePe</span></button>
+              <button class="wallet-opt" onclick="selectWallet(this)"><span class="wallet-icon">💳</span><span class="wallet-name">Amazon Pay</span></button>
+              <button class="wallet-opt" onclick="selectWallet(this)"><span class="wallet-icon">🟣</span><span class="wallet-name">Mobikwik</span></button>
+              <button class="wallet-opt" onclick="selectWallet(this)"><span class="wallet-icon">🔵</span><span class="wallet-name">Freecharge</span></button>
+              <button class="wallet-opt" onclick="selectWallet(this)"><span class="wallet-icon">🌐</span><span class="wallet-name">JioMoney</span></button>
+            </div>
+            <div class="form-group" style="margin-top:18px;">
+              <label class="form-label">REGISTERED MOBILE NUMBER</label>
+              <input type="tel" class="form-input" placeholder="10-digit mobile number">
+            </div>
+          </div>
+
+          <!-- COD Panel -->
+          <div class="pay-panel" id="pp-cod">
+            <div class="cod-box">
+              <div class="cod-icon">💵</div>
+              <div class="cod-info">
+                <div class="cod-title">CASH ON DELIVERY</div>
+                <div class="cod-desc">Pay in cash when your timepiece is delivered. Please keep exact change ready. An additional handling fee of ₹99 applies for COD orders. Our delivery executive will call you 30 minutes before arrival.</div>
+              </div>
+            </div>
+            <div style="margin-top:16px;padding:14px 16px;background:rgba(201,168,76,0.06);border:1px solid rgba(201,168,76,0.2);">
+              <div style="font-size:12px;color:var(--gold);letter-spacing:1px;">⚠ Note: COD not available for orders above ₹5,00,000</div>
+            </div>
+          </div>
+
+          <div style="margin-top:28px;">
+            <button class="btn-gold" style="width:100%;justify-content:center;padding:18px;font-size:11px;" id="payBtn" onclick="placeOrder()">
+              Place Order & Pay <span id="payBtnAmt"></span>
+            </button>
+            <div style="display:flex;align-items:center;justify-content:center;gap:8px;margin-top:12px;font-size:11px;color:var(--text-dim);">
+              🔒 PCI DSS Compliant · 256-bit SSL · RBI Authorised
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Order Summary Sidebar -->
+  <div class="co-summary reveal">
+    <div class="cos-title">YOUR ORDER</div>
+    <div id="cosSummaryItems"></div>
+    <div class="cos-divider"></div>
+    <div class="cos-row"><span class="cos-row-lbl">Subtotal</span><span id="cosSubtotal">₹0</span></div>
+    <div class="cos-row"><span class="cos-row-lbl">Shipping</span><span style="color:var(--neon)">FREE</span></div>
+    <div class="cos-row"><span class="cos-row-lbl">GST (3%)</span><span id="cosGst">₹0</span></div>
+    <div class="cos-divider"></div>
+    <div class="cos-total"><span class="cos-total-lbl">TOTAL</span><span class="cos-total-val" id="cosTotal">₹0</span></div>
+    <div class="ssl-note">🔒 Secure SSL encrypted transaction</div>
+  </div>
+</div>
+
+<script src="js/app.js"></script>
+<script>
+// Populate summary
+function renderCOSummary() {
+  const items = Cart.get();
+  const container = document.getElementById('cosSummaryItems');
+  if (!items.length) {
+    container.innerHTML = '<p style="font-size:13px;color:var(--text-dim);">No items. <a href="index.html" style="color:var(--gold);">Shop now</a></p>';
+    return;
+  }
+  container.innerHTML = items.map(item => `
+    <div class="cos-item">
+      <div class="cos-img">
+        <div class="cos-img-bg" style="background:radial-gradient(ellipse at 40% 40%,${item.color||'#C9A84C'}22,transparent 70%)"></div>
+        ${watchSVG(item.color||'#C9A84C', item.caseFill||'#3a2e1a', item.dialBg||'#1a1510', 50)}
+      </div>
+      <div class="cos-meta">
+        <div class="cos-name">${item.name}</div>
+        <div class="cos-col">${item.collection}</div>
+        <div class="cos-qty">Qty: ${item.qty}</div>
+      </div>
+      <div class="cos-price">₹${(item.price*item.qty).toLocaleString('en-IN')}</div>
+    </div>
+  `).join('');
+  const sub = Cart.total();
+  const gst = Math.round(sub*0.03);
+  document.getElementById('cosSubtotal').textContent = `₹${sub.toLocaleString('en-IN')}`;
+  document.getElementById('cosGst').textContent = `₹${gst.toLocaleString('en-IN')}`;
+  document.getElementById('cosTotal').textContent = `₹${(sub+gst).toLocaleString('en-IN')}`;
+  document.getElementById('payBtnAmt').textContent = `— ₹${(sub+gst).toLocaleString('en-IN')}`;
+  document.getElementById('qrAmt').textContent = `₹${(sub+gst).toLocaleString('en-IN')}`;
+}
+renderCOSummary();
+
+// Delivery opts
+function selectDelivery(el) {
+  document.querySelectorAll('.dopt').forEach(d => d.classList.remove('on'));
+  el.classList.add('on');
+}
+
+// Login opt
+function selectLoginOpt(el) {
+  document.querySelectorAll('.login-opt').forEach(o => o.classList.remove('on'));
+  el.classList.add('on');
+}
+
+// Proceed to payment
+function proceedToPayment() {
+  const fname = document.getElementById('fname').value.trim();
+  const lname = document.getElementById('lname').value.trim();
+  const phone = document.getElementById('phone').value.trim();
+  const addr1 = document.getElementById('addr1').value.trim();
+  const city = document.getElementById('city').value.trim();
+  const pincode = document.getElementById('pincode').value.trim();
+  const state = document.getElementById('state').value;
+  if (!fname || !phone || !addr1 || !city || !pincode || !state) {
+    showToast('⚠', 'Please fill all required fields', '');
+    return;
+  }
+  // Show payment section
+  document.getElementById('addressSection').style.display = 'none';
+  document.getElementById('paymentSection').style.display = 'block';
+  document.getElementById('checkoutTitle').textContent = 'Secure Payment';
+  // Update stepper
+  document.getElementById('step2').className = 'step done';
+  document.getElementById('step2').querySelector('.step-num').textContent = '✓';
+  document.getElementById('step3').className = 'step active';
+  // Address summary
+  document.getElementById('addrSummaryBody').innerHTML = `
+    <strong>${fname} ${lname}</strong><br>
+    +91 ${phone}<br>
+    ${addr1}${document.getElementById('addr2').value ? ', ' + document.getElementById('addr2').value : ''}<br>
+    ${city}, ${state} — ${pincode}<br>
+    ${document.getElementById('country').value}
+  `;
+}
+function backToAddress() {
+  document.getElementById('addressSection').style.display = '';
+  document.getElementById('paymentSection').style.display = 'none';
+  document.getElementById('checkoutTitle').textContent = 'Delivery Details';
+  document.getElementById('step2').className = 'step active';
+  document.getElementById('step2').querySelector('.step-num').textContent = '2';
+  document.getElementById('step3').className = 'step';
+}
+
+// Pay tabs
+function setPayTab(btn, id) {
+  document.querySelectorAll('.pay-tab').forEach(b => b.classList.remove('on'));
+  document.querySelectorAll('.pay-panel').forEach(p => p.classList.remove('on'));
+  btn.classList.add('on');
+  document.getElementById('pp-'+id).classList.add('on');
+}
+
+// UPI options
+function selectUPIopt(el, type) {
+  document.querySelectorAll('.upi-opt').forEach(o => o.classList.remove('on'));
+  el.classList.add('on');
+  document.getElementById('upiIdBox').style.display = type === 'id' ? '' : 'none';
+  document.getElementById('qrBox').style.display = type === 'qr' ? '' : 'none';
+}
+function verifyUPI() {
+  const val = document.getElementById('upiId').value.trim();
+  const st = document.getElementById('upiStatus');
+  if (!val || !val.includes('@')) {
+    st.innerHTML = '<span style="color:#e74c3c">✗ Invalid UPI ID format</span>';
+    return;
+  }
+  st.innerHTML = '<span style="color:var(--gold)">⟳ Verifying...</span>';
+  setTimeout(() => { st.innerHTML = '<span style="color:var(--neon)">✓ UPI ID verified successfully</span>'; }, 1200);
+}
+
+// Card formatting
+function formatCardNum(inp) {
+  let v = inp.value.replace(/\D/g,'').slice(0,16);
+  inp.value = v.replace(/(.{4})/g,'$1 ').trim();
+  const disp = v.padEnd(16,'•').replace(/(.{4})/g,'$1 ').trim();
+  document.getElementById('cardNumDisplay').textContent = disp.length ? disp : '•••• •••• •••• ••••';
+  if (v.startsWith('4')) document.getElementById('cardBrand').textContent = 'VISA';
+  else if (v.startsWith('5')) document.getElementById('cardBrand').textContent = 'MC';
+  else if (v.startsWith('3')) document.getElementById('cardBrand').textContent = 'AMEX';
+  else document.getElementById('cardBrand').textContent = 'CARD';
+}
+function formatExp(inp) {
+  let v = inp.value.replace(/\D/g,'');
+  if (v.length >= 3) v = v.slice(0,2) + ' / ' + v.slice(2,4);
+  inp.value = v;
+  document.getElementById('cardExpDisplay').textContent = inp.value || 'MM/YY';
+}
+
+// Bank / Wallet
+function selectBank(el) {
+  document.querySelectorAll('.bank-opt').forEach(b => b.classList.remove('on'));
+  el.classList.add('on');
+}
+function selectWallet(el) {
+  document.querySelectorAll('.wallet-opt').forEach(w => w.classList.remove('on'));
+  el.classList.add('on');
+}
+
+// Pincode check
+function pincodeCheck(v) {
+  const info = document.getElementById('pincodeInfo');
+  if (v.length === 6) { info.style.display = ''; }
+  else { info.style.display = 'none'; }
+}
+
+// Place order
+function placeOrder() {
+  const btn = document.getElementById('payBtn');
+  btn.textContent = '⟳ Processing Payment...';
+  btn.disabled = true;
+  document.getElementById('step3').className = 'step done';
+  document.getElementById('step3').querySelector('.step-num').textContent = '✓';
+  document.getElementById('step4').className = 'step active';
+  setTimeout(() => {
+    const orderNo = 'MRB' + Date.now().toString().slice(-8);
+    localStorage.setItem('mrbrand_lastorder', JSON.stringify({
+      orderNo,
+      items: Cart.get(),
+      total: Cart.total() + Math.round(Cart.total()*0.03),
+      address: document.getElementById('addrSummaryBody') ? document.getElementById('addrSummaryBody').innerText : '',
+      date: new Date().toLocaleDateString('en-IN', {day:'numeric',month:'long',year:'numeric'})
+    }));
+    Cart.clear();
+    window.location.href = 'success.html';
+  }, 2200);
+}
+</script>
+</body>
+</html>
