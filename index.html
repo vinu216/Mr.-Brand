@@ -1,0 +1,776 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>MR. BRAND — Watches | Luxury Timepieces</title>
+<link rel="stylesheet" href="css/main.css">
+<style>
+/* ── HERO ── */
+.hero {
+  min-height: 68vh; display: flex; align-items: center;
+  position: relative; overflow: hidden; padding: 110px 60px 70px;
+}
+.hero-bg {
+  position: absolute; inset: 0;
+  background:
+    radial-gradient(ellipse 80% 60% at 65% 40%, rgba(201,168,76,0.08) 0%, transparent 60%),
+    radial-gradient(ellipse 50% 70% at 15% 80%, rgba(0,255,209,0.05) 0%, transparent 50%),
+    var(--bg-void);
+}
+.hero-grid-pat {
+  position: absolute; inset: 0;
+  background-image: linear-gradient(rgba(255,255,255,0.02) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.02) 1px, transparent 1px);
+  background-size: 80px 80px;
+  mask-image: radial-gradient(ellipse 80% 80% at 50% 50%, black 20%, transparent 80%);
+}
+.hero-orb {
+  position: absolute; border-radius: 50%; filter: blur(80px);
+  animation: drift 8s ease-in-out infinite; pointer-events: none;
+}
+.orb-1 { width:500px;height:500px;background:radial-gradient(circle,rgba(201,168,76,0.1) 0%,transparent 70%);top:-100px;right:-80px; }
+.orb-2 { width:350px;height:350px;background:radial-gradient(circle,rgba(0,255,209,0.07) 0%,transparent 70%);bottom:0;left:-50px;animation-delay:-3s; }
+@keyframes drift{0%,100%{transform:translate(0,0)}33%{transform:translate(30px,-20px)}66%{transform:translate(-20px,15px)}}
+.hero-wrap {
+  position: relative; z-index: 2;
+  max-width: 1300px; width: 100%; margin: 0 auto;
+  display: grid; grid-template-columns: 1fr 1fr; gap: 60px; align-items: center;
+}
+.hero-eyebrow {
+  font-family: 'Syncopate', sans-serif; font-size: 9px; letter-spacing: 5px; color: var(--neon);
+  margin-bottom: 20px; display: flex; align-items: center; gap: 12px;
+  opacity: 0; animation: fadeUp 1s ease 0.3s forwards;
+}
+.hero-eyebrow::before { content:''; width:30px; height:1px; background:var(--neon); }
+.hero-h1 {
+  font-family: 'Cormorant Garamond', serif;
+  font-size: clamp(46px,5.5vw,82px); font-weight: 300; line-height: 1.02;
+  opacity: 0; animation: fadeUp 1.1s ease 0.5s forwards;
+}
+.hero-h1 em { font-style: italic; color: var(--gold-light); display: block; }
+.hero-sub {
+  font-size: 14px; line-height: 1.85; color: var(--text-muted); max-width: 420px; margin-top: 22px;
+  opacity: 0; animation: fadeUp 1s ease 0.7s forwards;
+}
+.hero-btns {
+  display: flex; gap: 16px; margin-top: 36px;
+  opacity: 0; animation: fadeUp 1s ease 0.9s forwards;
+}
+.hero-watch-visual {
+  display: flex; align-items: center; justify-content: center; position: relative;
+  opacity: 0; animation: fadeIn 1.5s ease 0.8s forwards;
+}
+.hw-ring {
+  position: absolute; border-radius: 50%;
+  border: 1px solid rgba(201,168,76,0.12); animation: spinSlow 30s linear infinite;
+}
+.hw-ring-1 { width:380px; height:380px; }
+.hw-ring-2 { width:450px; height:450px; border-style:dashed; animation-direction:reverse; opacity:0.4; }
+.hw-glow {
+  position: absolute; width:240px; height:240px; border-radius:50%;
+  background: radial-gradient(circle, rgba(201,168,76,0.15) 0%, transparent 70%);
+  animation: pulseG 3s ease-in-out infinite;
+}
+.watch-float { animation: floatW 5s ease-in-out infinite; }
+@keyframes spinSlow { to { transform: rotate(360deg); } }
+@keyframes pulseG { 0%,100%{opacity:0.5;transform:scale(1)} 50%{opacity:1;transform:scale(1.1)} }
+@keyframes floatW { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-14px)} }
+@keyframes fadeUp { from{opacity:0;transform:translateY(28px)} to{opacity:1;transform:none} }
+@keyframes fadeIn { from{opacity:0} to{opacity:1} }
+
+/* ── CATEGORY TABS ── */
+.cat-bar {
+  background: var(--bg-deep);
+  border-bottom: 1px solid var(--glass-border);
+  padding: 0 60px; overflow-x: auto;
+}
+.cat-bar::-webkit-scrollbar { display: none; }
+.cat-tabs { display: flex; gap: 0; }
+.cat-tab {
+  font-family: 'Syncopate', sans-serif; font-size: 9px; letter-spacing: 2px;
+  padding: 16px 24px; border: none; background: transparent; color: var(--text-muted);
+  cursor: none; white-space: nowrap; border-bottom: 2px solid transparent; transition: all 0.3s;
+}
+.cat-tab:hover { color: var(--text-primary); border-bottom-color: rgba(201,168,76,0.3); }
+.cat-tab.active { color: var(--gold); border-bottom-color: var(--gold); }
+
+/* ── SHOP LAYOUT ── */
+.shop-wrap {
+  background: var(--bg-deep); min-height: 100vh;
+}
+.shop-inner {
+  max-width: 1400px; margin: 0 auto;
+  display: grid; grid-template-columns: 270px 1fr;
+  padding: 0 60px;
+}
+
+/* ── FILTER SIDEBAR ── */
+.sidebar {
+  border-right: 1px solid var(--glass-border);
+  padding: 36px 28px 36px 0;
+  position: sticky; top: 72px; height: calc(100vh - 72px);
+  overflow-y: auto; overflow-x: hidden;
+}
+.sidebar::-webkit-scrollbar { width: 2px; }
+.sidebar::-webkit-scrollbar-thumb { background: rgba(201,168,76,0.25); }
+.sidebar-hd {
+  display: flex; justify-content: space-between; align-items: center; margin-bottom: 28px;
+}
+.sidebar-hd-title { font-family:'Syncopate',sans-serif; font-size:10px; letter-spacing:4px; }
+.clear-all-btn {
+  font-size:10px; color:var(--gold); background:none; border:none;
+  cursor:none; transition:opacity 0.2s;
+}
+.clear-all-btn:hover { opacity: 0.7; }
+.filter-group { margin-bottom: 28px; padding-bottom: 24px; border-bottom: 1px solid var(--glass-border); }
+.filter-group:last-child { border-bottom: none; }
+.fg-header {
+  display: flex; justify-content: space-between; align-items: center;
+  margin-bottom: 14px; cursor: none;
+}
+.fg-name { font-family:'Syncopate',sans-serif; font-size:8px; letter-spacing:3px; color:var(--text-muted); }
+.fg-toggle { font-size:12px; color:var(--text-dim); transition:transform 0.3s; }
+.fg-toggle.open { transform: rotate(180deg); }
+.fg-body { display:flex; flex-direction:column; gap:10px; }
+.fg-body.collapsed { display: none; }
+.f-opt { display:flex; align-items:center; gap:10px; cursor:none; }
+.fchk {
+  width:15px; height:15px; border:1px solid var(--glass-border); flex-shrink:0;
+  display:flex; align-items:center; justify-content:center; transition:all 0.2s;
+}
+.fchk.on { background:var(--gold); border-color:var(--gold); }
+.fchk.on::after { content:'✓'; font-size:9px; color:var(--bg-void); font-weight:700; }
+.f-lbl {
+  font-size:12px; color:var(--text-muted); flex:1;
+  display:flex; justify-content:space-between; transition:color 0.2s;
+}
+.f-opt:hover .f-lbl { color: var(--text-primary); }
+.f-cnt { font-size:10px; color:var(--text-dim); }
+.price-range { margin-top: 4px; }
+.price-inps { display:flex; gap:8px; margin-bottom:12px; }
+.price-inp {
+  flex:1; background:rgba(255,255,255,0.04); border:1px solid var(--glass-border);
+  padding:8px 10px; color:var(--text-primary); font-size:11px;
+  font-family:'DM Sans',sans-serif; outline:none;
+}
+.price-inp:focus { border-color:rgba(201,168,76,0.4); }
+.price-track { height:2px; background:var(--glass-border); position:relative; margin:8px 0; }
+.price-fill { position:absolute; left:15%; right:25%; height:100%; background:var(--gold); }
+.price-handle {
+  position:absolute; width:12px; height:12px; background:var(--gold);
+  border-radius:50%; top:50%; transform:translateY(-50%); cursor:none;
+}
+.ph-l { left:15%; transform:translate(-50%,-50%); }
+.ph-r { right:25%; transform:translate(50%,-50%); }
+.price-labels { display:flex; justify-content:space-between; margin-top:6px; }
+.price-lbl { font-size:9px; color:var(--text-dim); letter-spacing:1px; }
+.color-swatches { display:flex; flex-wrap:wrap; gap:8px; }
+.csw {
+  width:22px; height:22px; border-radius:50%;
+  border:2px solid transparent; cursor:none; transition:all 0.2s;
+}
+.csw:hover,.csw.on { border-color:var(--gold); }
+
+/* ── PRODUCT AREA ── */
+.prod-area { padding: 32px 0 32px 32px; }
+.prod-topbar {
+  display:flex; justify-content:space-between; align-items:center;
+  margin-bottom:20px; padding-bottom:18px; border-bottom:1px solid var(--glass-border);
+}
+.results-count { font-size:12px; color:var(--text-muted); }
+.results-count strong { color:var(--text-primary); }
+.topbar-right { display:flex; align-items:center; gap:16px; }
+.view-btns { display:flex; gap:4px; }
+.vbtn {
+  width:30px; height:30px; border:1px solid var(--glass-border);
+  background:transparent; display:flex; align-items:center;
+  justify-content:center; cursor:none; color:var(--text-dim); font-size:13px; transition:all 0.2s;
+}
+.vbtn.on, .vbtn:hover { border-color:var(--gold); color:var(--gold); }
+.sort-sel {
+  background:rgba(255,255,255,0.04); border:1px solid var(--glass-border);
+  color:var(--text-muted); padding:7px 30px 7px 12px; font-size:11px;
+  font-family:'DM Sans',sans-serif; cursor:none; outline:none; letter-spacing:1px;
+  appearance:none;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='10' height='6'%3E%3Cpath d='M0 0l5 6 5-6z' fill='%23C9A84C'/%3E%3C/svg%3E");
+  background-repeat:no-repeat; background-position:right 10px center;
+}
+.active-chips { display:flex; flex-wrap:wrap; gap:8px; margin-bottom:20px; }
+.chip {
+  display:flex; align-items:center; gap:6px;
+  background:rgba(201,168,76,0.08); border:1px solid rgba(201,168,76,0.2);
+  padding:5px 12px; font-size:10px; color:var(--gold); cursor:none; transition:all 0.2s;
+}
+.chip:hover { background:rgba(201,168,76,0.15); }
+
+/* ── PRODUCT GRID ── */
+.pgrid { display:grid; grid-template-columns:repeat(3,1fr); gap:2px; }
+.pgrid.list { grid-template-columns:1fr; }
+.pcard {
+  position:relative; overflow:hidden; background:rgba(255,255,255,0.02);
+  cursor:none; transition:background 0.3s;
+}
+.pcard:hover { background:rgba(255,255,255,0.04); }
+.pcard-vis {
+  aspect-ratio:3/4; position:relative; overflow:hidden;
+  display:flex; align-items:center; justify-content:center;
+}
+.pcard-bg { position:absolute; inset:0; transition:transform 0.8s cubic-bezier(0.25,0.46,0.45,0.94); }
+.pcard:hover .pcard-bg { transform:scale(1.05); }
+.pcard-overlay {
+  position:absolute; inset:0;
+  background:linear-gradient(to top,rgba(5,5,7,0.85) 0%,rgba(5,5,7,0.08) 55%,transparent 100%);
+}
+.pcard-badges { position:absolute; top:14px; left:14px; display:flex; flex-direction:column; gap:5px; z-index:2; }
+.badge {
+  padding:4px 9px; font-size:8px; letter-spacing:2px; text-transform:uppercase;
+  font-family:'Syncopate',sans-serif; backdrop-filter:blur(10px);
+}
+.badge-new { background:rgba(0,255,209,0.12); color:var(--neon); border:1px solid rgba(0,255,209,0.25); }
+.badge-sale { background:rgba(201,168,76,0.12); color:var(--gold); border:1px solid rgba(201,168,76,0.25); }
+.badge-ltd { background:rgba(77,159,255,0.12); color:var(--neon-blue); border:1px solid rgba(77,159,255,0.25); }
+.pcard-wl {
+  position:absolute; top:14px; right:14px; z-index:2;
+  width:30px; height:30px;
+  background:rgba(255,255,255,0.05); border:1px solid var(--glass-border);
+  display:flex; align-items:center; justify-content:center;
+  font-size:14px; transition:all 0.3s; cursor:none;
+  opacity:0; transform:translateY(-4px);
+}
+.pcard:hover .pcard-wl { opacity:1; transform:none; }
+.pcard-wl:hover, .pcard-wl.wishlisted { background:rgba(201,168,76,0.15); border-color:var(--gold); color:var(--gold); }
+.watch-wrap { position:relative; z-index:1; filter:drop-shadow(0 18px 36px rgba(201,168,76,0.18)); }
+.watch-anim { animation:floatW 5s ease-in-out infinite; }
+.pcard-qv {
+  position:absolute; bottom:0; left:0; right:0;
+  background:rgba(201,168,76,0.92); color:var(--bg-void);
+  padding:10px; text-align:center;
+  font-family:'Syncopate',sans-serif; font-size:9px; letter-spacing:3px;
+  transform:translateY(100%); transition:transform 0.3s; cursor:none;
+  text-decoration:none; display:block;
+}
+.pcard:hover .pcard-qv { transform:none; }
+.pcard-info { padding:18px 18px 22px; }
+.pcard-col { font-size:9px; letter-spacing:3px; text-transform:uppercase; color:var(--gold); margin-bottom:5px; }
+.pcard-name { font-family:'Cormorant Garamond',serif; font-size:19px; font-weight:300; line-height:1.2; margin-bottom:6px; }
+.pcard-spec { font-size:11px; color:var(--text-dim); letter-spacing:1px; margin-bottom:12px; }
+.pcard-foot { display:flex; justify-content:space-between; align-items:flex-end; }
+.pcard-price {}
+.old-price { font-size:11px; color:var(--text-dim); text-decoration:line-through; margin-bottom:2px; }
+.cur-price { font-family:'Cormorant Garamond',serif; font-size:22px; color:var(--gold-light); line-height:1; }
+.add-cart-btn {
+  width:34px; height:34px; background:transparent;
+  border:1px solid var(--glass-border); display:flex; align-items:center;
+  justify-content:center; cursor:none; font-size:14px; color:var(--text-muted);
+  transition:all 0.3s; opacity:0; transform:translateY(4px);
+}
+.pcard:hover .add-cart-btn { opacity:1; transform:none; }
+.add-cart-btn:hover { background:var(--gold); border-color:var(--gold); color:var(--bg-void); }
+.load-more { text-align:center; padding:48px 0 20px; }
+.progress-info { font-size:11px; color:var(--text-dim); letter-spacing:2px; margin-bottom:16px; }
+.prog-bar { width:180px; height:1px; background:var(--glass-border); margin:0 auto 22px; }
+.prog-fill { width:50%; height:100%; background:var(--gold); }
+.load-more-btn {
+  font-family:'Syncopate',sans-serif; font-size:10px; letter-spacing:4px;
+  padding:16px 52px; background:transparent; border:1px solid var(--glass-border);
+  color:var(--text-muted); cursor:none; transition:all 0.4s; position:relative; overflow:hidden;
+}
+.load-more-btn::before {
+  content:''; position:absolute; top:0; left:-100%; width:100%; height:100%;
+  background:linear-gradient(135deg,var(--gold),var(--gold-light));
+  transition:left 0.4s; z-index:-1;
+}
+.load-more-btn:hover { color:var(--bg-void); border-color:var(--gold); }
+.load-more-btn:hover::before { left:0; }
+
+/* ── NEWSLETTER ── */
+.nl-section { padding:70px 60px; text-align:center; position:relative; overflow:hidden; }
+.nl-glow {
+  position:absolute; inset:0;
+  background:radial-gradient(ellipse 60% 60% at 50% 50%, rgba(201,168,76,0.06) 0%, transparent 70%);
+  pointer-events:none;
+}
+.nl-label {
+  font-family:'Syncopate',sans-serif; font-size:9px; letter-spacing:5px; color:var(--neon);
+  margin-bottom:14px; display:flex; align-items:center; justify-content:center; gap:12px;
+}
+.nl-label::before { content:''; width:24px; height:1px; background:var(--neon); }
+.nl-title { font-family:'Cormorant Garamond',serif; font-size:clamp(32px,4vw,58px); font-weight:300; margin-bottom:14px; }
+.nl-title em { font-style:italic; color:var(--gold-light); }
+.nl-sub { font-size:13px; color:var(--text-muted); max-width:440px; margin:0 auto 32px; line-height:1.8; }
+.nl-form { display:flex; max-width:420px; margin:0 auto; position:relative; z-index:2; }
+.nl-inp {
+  flex:1; background:rgba(255,255,255,0.04); border:1px solid var(--glass-border);
+  border-right:none; padding:14px 18px; color:var(--text-primary);
+  font-size:13px; font-family:'DM Sans',sans-serif; outline:none;
+}
+.nl-inp::placeholder { color:var(--text-dim); }
+.nl-inp:focus { border-color:var(--gold); }
+.nl-btn {
+  font-family:'Syncopate',sans-serif; font-size:9px; letter-spacing:2px;
+  padding:14px 24px; background:var(--gold); color:var(--bg-void);
+  border:none; cursor:none; transition:background 0.3s; white-space:nowrap;
+}
+.nl-btn:hover { background:var(--gold-light); }
+
+@media(max-width:1100px) {
+  .shop-inner { grid-template-columns:1fr; padding:0 30px; }
+  .sidebar { display:none; }
+  .pgrid { grid-template-columns:repeat(2,1fr); }
+  .hero-wrap { grid-template-columns:1fr; }
+  .hero-watch-visual { display:none; }
+  .hero { padding:100px 30px 60px; }
+  .cat-bar { padding:0 30px; }
+  .nl-section { padding:50px 30px; }
+}
+@media(max-width:600px) {
+  .pgrid { grid-template-columns:repeat(2,1fr); gap:1px; }
+  .hero { padding:90px 20px 50px; }
+  .cat-bar { padding:0 20px; }
+  .shop-inner { padding:0 20px; }
+  .nl-section { padding:44px 20px; }
+}
+</style>
+</head>
+<body>
+<div class="cursor" id="cursor"></div>
+<div class="cursor-ring" id="cursorRing"></div>
+
+<!-- NAV -->
+<nav id="navbar">
+  <a href="index.html" class="nav-logo">MR<span>.</span> BRAND</a>
+  <ul class="nav-links">
+    <li><a href="index.html" class="active">Watches</a></li>
+    <li><a href="#">Jewellery</a></li>
+    <li><a href="#">Accessories</a></li>
+    <li><a href="#">Bespoke</a></li>
+    <li><a href="#">Heritage</a></li>
+    <li><a href="#">Stores</a></li>
+  </ul>
+  <div class="nav-right">
+    <button class="nav-icon-btn" onclick="document.getElementById('searchModal').style.display='flex'" title="Search">
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="6" cy="6" r="5" stroke="currentColor" stroke-width="1.2"/><line x1="10" y1="10" x2="13" y2="13" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+    </button>
+    <button class="nav-icon-btn" title="Account">
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><circle cx="7" cy="4.5" r="2.5" stroke="currentColor" stroke-width="1.2"/><path d="M2 12.5c0-2.8 2.2-5 5-5s5 2.2 5 5" stroke="currentColor" stroke-width="1.2" stroke-linecap="round"/></svg>
+    </button>
+    <a href="cart.html" class="nav-icon-btn" title="Cart" style="position:relative">
+      <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M1 1h2l1.5 7.5h7L13 4H4" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="5.5" cy="11.5" r="1" fill="currentColor"/><circle cx="10.5" cy="11.5" r="1" fill="currentColor"/></svg>
+      <span class="cart-badge">0</span>
+    </a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-grid-pat"></div>
+  <div class="hero-orb orb-1"></div>
+  <div class="hero-orb orb-2"></div>
+  <div class="hero-wrap">
+    <div>
+      <div class="hero-eyebrow">New Collection 2025</div>
+      <h1 class="hero-h1">Crafted for<em>Eternity</em></h1>
+      <p class="hero-sub">Each MR. BRAND timepiece is a living testament to a century of horological mastery — where precision engineering meets artisanal soul.</p>
+      <div class="hero-btns">
+        <button class="btn-gold" onclick="document.getElementById('shopAnchor').scrollIntoView({behavior:'smooth'})">Explore Collection</button>
+        <button class="btn-outline">Our Story <svg width="14" height="10" viewBox="0 0 14 10" fill="none"><path d="M0 5h13M9 1l4 4-4 4" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/></svg></button>
+      </div>
+    </div>
+    <div class="hero-watch-visual">
+      <div class="hw-ring hw-ring-1"></div>
+      <div class="hw-ring hw-ring-2"></div>
+      <div class="hw-glow"></div>
+      <div class="watch-float" id="heroWatch"></div>
+    </div>
+  </div>
+</section>
+
+<!-- MARQUEE -->
+<div class="marquee-strip">
+  <div class="marquee-track" id="mTrack"></div>
+</div>
+
+<!-- CATEGORY TABS -->
+<div class="cat-bar" id="shopAnchor">
+  <div class="cat-tabs">
+    <button class="cat-tab active" data-cat="all">All Watches</button>
+    <button class="cat-tab" data-cat="Celestial">Celestial</button>
+    <button class="cat-tab" data-cat="Lumière">Lumière</button>
+    <button class="cat-tab" data-cat="Horizon">Horizon</button>
+    <button class="cat-tab" data-cat="Nocturne">Nocturne</button>
+    <button class="cat-tab" data-cat="Perpetua">Perpetua</button>
+    <button class="cat-tab" data-cat="ltd">Limited Edition</button>
+  </div>
+</div>
+
+<!-- SHOP -->
+<div class="shop-wrap">
+  <div class="shop-inner">
+    <!-- Sidebar -->
+    <aside class="sidebar">
+      <div class="sidebar-hd">
+        <span class="sidebar-hd-title">FILTERS</span>
+        <button class="clear-all-btn" onclick="clearAllFilters()">Clear All</button>
+      </div>
+
+      <!-- Collections -->
+      <div class="filter-group">
+        <div class="fg-header" onclick="toggleFG(this)">
+          <span class="fg-name">COLLECTION</span>
+          <span class="fg-toggle open">▾</span>
+        </div>
+        <div class="fg-body" id="fg-collection">
+          <div class="f-opt"><div class="fchk" onclick="toggleFChk(this,'collection','Celestial')"></div><span class="f-lbl">Celestial <span class="f-cnt">3</span></span></div>
+          <div class="f-opt"><div class="fchk" onclick="toggleFChk(this,'collection','Lumière')"></div><span class="f-lbl">Lumière <span class="f-cnt">2</span></span></div>
+          <div class="f-opt"><div class="fchk" onclick="toggleFChk(this,'collection','Horizon')"></div><span class="f-lbl">Horizon <span class="f-cnt">3</span></span></div>
+          <div class="f-opt"><div class="fchk" onclick="toggleFChk(this,'collection','Nocturne')"></div><span class="f-lbl">Nocturne <span class="f-cnt">3</span></span></div>
+          <div class="f-opt"><div class="fchk" onclick="toggleFChk(this,'collection','Perpetua')"></div><span class="f-lbl">Perpetua <span class="f-cnt">2</span></span></div>
+        </div>
+      </div>
+
+      <!-- Price -->
+      <div class="filter-group">
+        <div class="fg-header" onclick="toggleFG(this)">
+          <span class="fg-name">PRICE RANGE</span>
+          <span class="fg-toggle open">▾</span>
+        </div>
+        <div class="fg-body price-range">
+          <div class="price-inps">
+            <input class="price-inp" placeholder="₹ Min" value="₹ 15,000" id="prMin">
+            <input class="price-inp" placeholder="₹ Max" value="₹ 25,00,000" id="prMax">
+          </div>
+          <div class="price-track"><div class="price-fill"></div><div class="price-handle ph-l"></div><div class="price-handle ph-r"></div></div>
+          <div class="price-labels"><span class="price-lbl">₹15K</span><span class="price-lbl">₹25L+</span></div>
+        </div>
+      </div>
+
+      <!-- Movement -->
+      <div class="filter-group">
+        <div class="fg-header" onclick="toggleFG(this)">
+          <span class="fg-name">MOVEMENT</span>
+          <span class="fg-toggle open">▾</span>
+        </div>
+        <div class="fg-body" id="fg-movement">
+          <div class="f-opt"><div class="fchk" onclick="toggleFChk(this,'movement','Automatic')"></div><span class="f-lbl">Automatic <span class="f-cnt">7</span></span></div>
+          <div class="f-opt"><div class="fchk" onclick="toggleFChk(this,'movement','Manual')"></div><span class="f-lbl">Manual Wind <span class="f-cnt">1</span></span></div>
+          <div class="f-opt"><div class="fchk" onclick="toggleFChk(this,'movement','Quartz')"></div><span class="f-lbl">Quartz <span class="f-cnt">3</span></span></div>
+          <div class="f-opt"><div class="fchk" onclick="toggleFChk(this,'movement','Tourbillon')"></div><span class="f-lbl">Tourbillon <span class="f-cnt">2</span></span></div>
+        </div>
+      </div>
+
+      <!-- Case Material -->
+      <div class="filter-group">
+        <div class="fg-header" onclick="toggleFG(this)">
+          <span class="fg-name">CASE MATERIAL</span>
+          <span class="fg-toggle open">▾</span>
+        </div>
+        <div class="fg-body" id="fg-material">
+          <div class="f-opt"><div class="fchk" onclick="toggleFChk(this,'material','Steel')"></div><span class="f-lbl">Stainless Steel <span class="f-cnt">5</span></span></div>
+          <div class="f-opt"><div class="fchk" onclick="toggleFChk(this,'material','Gold')"></div><span class="f-lbl">18K Gold <span class="f-cnt">4</span></span></div>
+          <div class="f-opt"><div class="fchk" onclick="toggleFChk(this,'material','Rose')"></div><span class="f-lbl">Rose Gold <span class="f-cnt">1</span></span></div>
+          <div class="f-opt"><div class="fchk" onclick="toggleFChk(this,'material','Titanium')"></div><span class="f-lbl">Titanium <span class="f-cnt">2</span></span></div>
+        </div>
+      </div>
+
+      <!-- Dial Colour -->
+      <div class="filter-group">
+        <div class="fg-header" onclick="toggleFG(this)">
+          <span class="fg-name">DIAL COLOUR</span>
+          <span class="fg-toggle open">▾</span>
+        </div>
+        <div class="fg-body">
+          <div class="color-swatches">
+            <div class="csw" style="background:#C9A84C" title="Gold" onclick="this.classList.toggle('on')"></div>
+            <div class="csw" style="background:#B8B8B8" title="Silver" onclick="this.classList.toggle('on')"></div>
+            <div class="csw" style="background:#2D5A8E" title="Blue" onclick="this.classList.toggle('on')"></div>
+            <div class="csw" style="background:#151515;border:1px solid rgba(255,255,255,0.1)" title="Black" onclick="this.classList.toggle('on')"></div>
+            <div class="csw" style="background:#2d4a2d" title="Green" onclick="this.classList.toggle('on')"></div>
+            <div class="csw" style="background:#4a1a2d" title="Burgundy" onclick="this.classList.toggle('on')"></div>
+            <div class="csw" style="background:#3a1a4a" title="Purple" onclick="this.classList.toggle('on')"></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Strap -->
+      <div class="filter-group">
+        <div class="fg-header" onclick="toggleFG(this)">
+          <span class="fg-name">STRAP TYPE</span>
+          <span class="fg-toggle open">▾</span>
+        </div>
+        <div class="fg-body">
+          <div class="f-opt"><div class="fchk" onclick="toggleFChk(this,'strap','Leather')"></div><span class="f-lbl">Leather <span class="f-cnt">8</span></span></div>
+          <div class="f-opt"><div class="fchk" onclick="toggleFChk(this,'strap','Bracelet')"></div><span class="f-lbl">Metal Bracelet <span class="f-cnt">2</span></span></div>
+          <div class="f-opt"><div class="fchk" onclick="toggleFChk(this,'strap','Rubber')"></div><span class="f-lbl">Rubber <span class="f-cnt">2</span></span></div>
+          <div class="f-opt"><div class="fchk" onclick="toggleFChk(this,'strap','Fabric')"></div><span class="f-lbl">Fabric <span class="f-cnt">1</span></span></div>
+        </div>
+      </div>
+
+      <!-- Features -->
+      <div class="filter-group">
+        <div class="fg-header" onclick="toggleFG(this)">
+          <span class="fg-name">FEATURES</span>
+          <span class="fg-toggle open">▾</span>
+        </div>
+        <div class="fg-body">
+          <div class="f-opt"><div class="fchk" onclick="toggleFChk(this,'feature','Chronograph')"></div><span class="f-lbl">Chronograph <span class="f-cnt">3</span></span></div>
+          <div class="f-opt"><div class="fchk" onclick="toggleFChk(this,'feature','Moon Phase')"></div><span class="f-lbl">Moon Phase <span class="f-cnt">2</span></span></div>
+          <div class="f-opt"><div class="fchk" onclick="toggleFChk(this,'feature','GMT')"></div><span class="f-lbl">GMT / Dual Time <span class="f-cnt">1</span></span></div>
+          <div class="f-opt"><div class="fchk" onclick="toggleFChk(this,'feature','Skeleton')"></div><span class="f-lbl">Skeleton Dial <span class="f-cnt">1</span></span></div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Product Area -->
+    <div class="prod-area">
+      <div class="prod-topbar">
+        <div class="results-count">Showing <strong id="prodCount">12</strong> timepieces</div>
+        <div class="topbar-right">
+          <div class="view-btns">
+            <button class="vbtn on" title="Grid" onclick="setView('grid',this)">⊞</button>
+            <button class="vbtn" title="List" onclick="setView('list',this)">☰</button>
+          </div>
+          <select class="sort-sel" onchange="sortProducts(this.value)">
+            <option value="featured">Featured</option>
+            <option value="price-asc">Price: Low to High</option>
+            <option value="price-desc">Price: High to Low</option>
+            <option value="newest">Newest First</option>
+            <option value="bestseller">Best Sellers</option>
+          </select>
+        </div>
+      </div>
+      <div class="active-chips" id="chipBox"></div>
+      <div class="pgrid" id="prodGrid"></div>
+      <div class="load-more">
+        <p class="progress-info" id="progInfo">Showing 12 of 12 timepieces</p>
+        <div class="prog-bar"><div class="prog-fill" id="progFill" style="width:100%"></div></div>
+        <button class="load-more-btn" onclick="showToast('✓','All pieces loaded','That\'s our full collection')">Load More Timepieces</button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- FEATURE STRIP -->
+<div class="feature-strip">
+  <div class="fstrip-item"><span class="fstrip-icon">🚚</span><div><div class="fstrip-name">Free Delivery</div><div class="fstrip-desc">Insured shipping on all orders</div></div></div>
+  <div class="fstrip-item"><span class="fstrip-icon">🔒</span><div><div class="fstrip-name">Authenticity Cert.</div><div class="fstrip-desc">Certified by our master atelier</div></div></div>
+  <div class="fstrip-item"><span class="fstrip-icon">↩</span><div><div class="fstrip-name">30-Day Returns</div><div class="fstrip-desc">Hassle-free, full refund</div></div></div>
+  <div class="fstrip-item"><span class="fstrip-icon">🛠</span><div><div class="fstrip-name">Lifetime Service</div><div class="fstrip-desc">Complimentary maintenance forever</div></div></div>
+</div>
+
+<!-- NEWSLETTER -->
+<section class="nl-section">
+  <div class="nl-glow"></div>
+  <div class="nl-label">Privileged Circle</div>
+  <h2 class="nl-title reveal">Join the <em>Inner Sanctum</em></h2>
+  <p class="nl-sub reveal reveal-d1">First access to new collections, private events, and exclusive commissions.</p>
+  <div class="nl-form reveal reveal-d2">
+    <input type="email" class="nl-inp" placeholder="Your email address">
+    <button class="nl-btn" onclick="showToast('✉','Thank you!','You\'re now part of our inner circle')">Request Access</button>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-grid">
+    <div>
+      <span class="footer-logo">MR<span>.</span> BRAND</span>
+      <p class="footer-tagline">Geneva-inspired. India-crafted. World-revered. Extraordinary timepieces for a life without compromise.</p>
+      <div class="footer-social">
+        <a href="#" class="social-btn">𝕏</a><a href="#" class="social-btn">in</a>
+        <a href="#" class="social-btn">ig</a><a href="#" class="social-btn">yt</a>
+      </div>
+    </div>
+    <div><div class="footer-col-title">Collections</div>
+      <ul class="footer-links"><li><a href="#">Celestial Series</a></li><li><a href="#">Lumière Series</a></li><li><a href="#">Horizon Series</a></li><li><a href="#">Nocturne Series</a></li><li><a href="#">Limited Editions</a></li></ul>
+    </div>
+    <div><div class="footer-col-title">Maison</div>
+      <ul class="footer-links"><li><a href="#">Heritage</a></li><li><a href="#">Atelier</a></li><li><a href="#">Craftsmanship</a></li><li><a href="#">Sustainability</a></li><li><a href="#">Careers</a></li></ul>
+    </div>
+    <div><div class="footer-col-title">Services</div>
+      <ul class="footer-links"><li><a href="#">Private Appointments</a></li><li><a href="#">Bespoke Orders</a></li><li><a href="#">Authentication</a></li><li><a href="#">Servicing &amp; Repair</a></li><li><a href="#">Concierge</a></li></ul>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <span class="footer-copy">© 2025 MR. BRAND MAISON. ALL RIGHTS RESERVED.</span>
+    <div class="footer-legal"><a href="#">Privacy</a><a href="#">Terms</a><a href="#">Cookies</a></div>
+  </div>
+</footer>
+
+<!-- SEARCH MODAL -->
+<div id="searchModal" style="display:none;position:fixed;inset:0;z-index:600;background:rgba(5,5,7,0.95);backdrop-filter:blur(20px);align-items:center;justify-content:center;flex-direction:column;gap:24px;">
+  <button onclick="document.getElementById('searchModal').style.display='none'" style="position:absolute;top:30px;right:40px;background:none;border:none;color:var(--text-muted);font-size:24px;cursor:none;">×</button>
+  <div style="font-family:'Syncopate',sans-serif;font-size:9px;letter-spacing:5px;color:var(--neon);">SEARCH COLLECTION</div>
+  <div style="display:flex;width:500px;max-width:90vw;">
+    <input id="searchInp" placeholder="Search timepieces..." style="flex:1;background:rgba(255,255,255,0.06);border:1px solid var(--glass-border);border-right:none;padding:18px 22px;color:var(--text-primary);font-size:16px;font-family:'DM Sans',sans-serif;outline:none;" oninput="searchFilter(this.value)">
+    <button style="background:var(--gold);border:none;padding:0 24px;cursor:none;font-size:18px;">↵</button>
+  </div>
+  <div id="searchResults" style="width:500px;max-width:90vw;display:flex;flex-direction:column;gap:8px;"></div>
+</div>
+
+<script src="js/app.js"></script>
+<script>
+// Build marquee
+const marqueeItems = ['SWISS MOVEMENT','SAPPHIRE CRYSTAL','100M WATER RESISTANT','LIFETIME WARRANTY','FREE ENGRAVING','COMPLIMENTARY SERVICING','BESPOKE COMMISSIONS','AUTHENTICATED'];
+const mTrack = document.getElementById('mTrack');
+[...marqueeItems,...marqueeItems].forEach(t => {
+  mTrack.innerHTML += `<div class="marquee-item"><span class="mdot"></span>${t}</div>`;
+});
+
+// Build hero watch
+document.getElementById('heroWatch').innerHTML = watchSVG('#C9A84C','#3a2e1a','#1a1510',220,8,14,6);
+
+// Render products
+let activeFilters = {};
+let currentCat = 'all';
+
+function renderProducts(prods) {
+  const grid = document.getElementById('prodGrid');
+  document.getElementById('prodCount').textContent = prods.length;
+  grid.innerHTML = prods.map((p, i) => `
+    <div class="pcard reveal ${i>2?'reveal-d'+(i%3+1):''}" data-id="${p.id}">
+      <div class="pcard-vis">
+        <div class="pcard-bg" style="background:radial-gradient(ellipse at 40% 40%, ${p.bg}, transparent 60%), #080706;"></div>
+        <div class="pcard-overlay"></div>
+        ${p.badge ? `<div class="pcard-badges"><span class="badge badge-${p.badge}">${p.badge==='new'?'New':p.badge==='sale'?'Sale':'Ltd.'}</span></div>` : ''}
+        <div class="pcard-wl ${Wishlist.has(p.id)?'wishlisted':''}" onclick="wlToggle(this,'${p.id}')" title="Wishlist">${Wishlist.has(p.id)?'♥':'♡'}</div>
+        <div class="watch-wrap watch-anim" style="animation-delay:${-i*0.8}s">
+          ${watchSVG(p.color, p.caseFill, p.dialBg, 120)}
+        </div>
+        <a class="pcard-qv" href="product.html?id=${p.id}">QUICK VIEW</a>
+      </div>
+      <div class="pcard-info">
+        <div class="pcard-col">${p.collection}</div>
+        <div class="pcard-name">${p.name}</div>
+        <div class="pcard-spec">${p.spec}</div>
+        <div class="pcard-foot">
+          <div class="pcard-price">
+            ${p.oldPrice ? `<div class="old-price">₹${p.oldPrice.toLocaleString('en-IN')}</div>` : ''}
+            <div class="cur-price">₹${p.price.toLocaleString('en-IN')}</div>
+          </div>
+          <button class="add-cart-btn" onclick="addToCartBtn(this,'${p.id}')" title="Add to Cart">
+            <svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M1 1h2l1.5 7.5h7L13 4H4" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="5.5" cy="11.5" r="1" fill="currentColor"/><circle cx="10.5" cy="11.5" r="1" fill="currentColor"/></svg>
+          </button>
+        </div>
+      </div>
+    </div>
+  `).join('');
+  initReveal();
+  initCursor();
+  document.querySelectorAll('a[href="#"]').forEach(a => a.addEventListener('click', e => e.preventDefault()));
+}
+
+function getFilteredProducts() {
+  let prods = [...PRODUCTS];
+  if (currentCat !== 'all') {
+    if (currentCat === 'ltd') prods = prods.filter(p => p.badge === 'ltd');
+    else prods = prods.filter(p => p.collection === currentCat);
+  }
+  if (activeFilters.collection?.length) prods = prods.filter(p => activeFilters.collection.includes(p.collection));
+  return prods;
+}
+
+renderProducts(PRODUCTS);
+
+// Category tabs
+document.querySelectorAll('.cat-tab').forEach(btn => {
+  btn.addEventListener('click', function() {
+    document.querySelectorAll('.cat-tab').forEach(b => b.classList.remove('active'));
+    this.classList.add('active');
+    currentCat = this.dataset.cat;
+    renderProducts(getFilteredProducts());
+  });
+});
+
+// Sort
+function sortProducts(v) {
+  let prods = getFilteredProducts();
+  if (v==='price-asc') prods.sort((a,b)=>a.price-b.price);
+  else if (v==='price-desc') prods.sort((a,b)=>b.price-a.price);
+  renderProducts(prods);
+}
+
+// Filter checkbox
+function toggleFChk(el, group, val) {
+  el.classList.toggle('on');
+  if (!activeFilters[group]) activeFilters[group] = [];
+  if (activeFilters[group].includes(val)) activeFilters[group] = activeFilters[group].filter(v=>v!==val);
+  else activeFilters[group].push(val);
+  updateChips();
+  renderProducts(getFilteredProducts());
+}
+
+function updateChips() {
+  const box = document.getElementById('chipBox');
+  box.innerHTML = Object.entries(activeFilters).flatMap(([g,vals]) =>
+    vals.map(v => `<div class="chip">${v} <span onclick="removeChip('${g}','${v}')">×</span></div>`)
+  ).join('');
+}
+function removeChip(g, v) {
+  activeFilters[g] = activeFilters[g].filter(x=>x!==v);
+  document.querySelectorAll('.fchk.on').forEach(el => {
+    if (el.nextElementSibling?.textContent.trim().startsWith(v)) el.classList.remove('on');
+  });
+  updateChips(); renderProducts(getFilteredProducts());
+}
+function clearAllFilters() {
+  activeFilters = {};
+  document.querySelectorAll('.fchk.on').forEach(el => el.classList.remove('on'));
+  document.querySelectorAll('.csw.on').forEach(el => el.classList.remove('on'));
+  updateChips(); renderProducts(getFilteredProducts());
+}
+
+// Filter group collapse
+function toggleFG(header) {
+  const toggle = header.querySelector('.fg-toggle');
+  const body = header.nextElementSibling;
+  toggle.classList.toggle('open');
+  body.classList.toggle('collapsed');
+}
+
+// View toggle
+function setView(v, btn) {
+  document.querySelectorAll('.vbtn').forEach(b => b.classList.remove('on'));
+  btn.classList.add('on');
+  const grid = document.getElementById('prodGrid');
+  grid.className = v === 'list' ? 'pgrid list' : 'pgrid';
+}
+
+// Wishlist
+function wlToggle(el, id) {
+  const isNow = Wishlist.toggle(id);
+  el.textContent = isNow ? '♥' : '♡';
+  el.classList.toggle('wishlisted', isNow);
+}
+
+// Add to cart
+function addToCartBtn(btn, id) {
+  const p = PRODUCTS.find(x => x.id === id);
+  if (!p) return;
+  Cart.add({ id: p.id, name: p.name, price: p.price, collection: p.collection, color: p.color, dialBg: p.dialBg, caseFill: p.caseFill });
+  btn.innerHTML = '✓';
+  btn.style.background = 'var(--gold)'; btn.style.borderColor = 'var(--gold)'; btn.style.color = 'var(--bg-void)';
+  setTimeout(() => {
+    btn.innerHTML = '<svg width="14" height="14" viewBox="0 0 14 14" fill="none"><path d="M1 1h2l1.5 7.5h7L13 4H4" stroke="currentColor" stroke-width="1.2" stroke-linecap="round" stroke-linejoin="round"/><circle cx="5.5" cy="11.5" r="1" fill="currentColor"/><circle cx="10.5" cy="11.5" r="1" fill="currentColor"/></svg>';
+    btn.style.background=''; btn.style.borderColor=''; btn.style.color='';
+  }, 1500);
+}
+
+// Search
+function searchFilter(q) {
+  const res = document.getElementById('searchResults');
+  if (!q.trim()) { res.innerHTML=''; return; }
+  const matches = PRODUCTS.filter(p => p.name.toLowerCase().includes(q.toLowerCase()) || p.collection.toLowerCase().includes(q.toLowerCase()));
+  res.innerHTML = matches.slice(0,5).map(p => `
+    <a href="product.html?id=${p.id}" style="display:flex;align-items:center;gap:16px;padding:12px 16px;background:rgba(255,255,255,0.04);border:1px solid var(--glass-border);text-decoration:none;color:var(--text-primary);transition:background 0.2s;">
+      <div style="width:36px;height:46px;display:flex;align-items:center;justify-content:center;">${watchSVG(p.color,p.caseFill,p.dialBg,36)}</div>
+      <div><div style="font-family:'Cormorant Garamond',serif;font-size:17px;">${p.name}</div><div style="font-size:10px;color:var(--text-dim);letter-spacing:1px;">${p.collection} · ₹${p.price.toLocaleString('en-IN')}</div></div>
+    </a>
+  `).join('') || '<div style="font-size:13px;color:var(--text-dim);padding:12px;">No results found.</div>';
+}
+
+initParallax();
+</script>
+</body>
+</html>
